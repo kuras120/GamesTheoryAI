@@ -10,7 +10,9 @@
           </option>
           <option name="goals">
             <list>
+              <option value="javafx:compile" />
               <option value="javafx:jlink" />
+              <option value="validate" />
             </list>
           </option>
           <option name="pomFileName" />

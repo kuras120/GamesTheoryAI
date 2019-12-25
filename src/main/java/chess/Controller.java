@@ -27,9 +27,7 @@ public class Controller implements Initializable {
 
     private Map<String, String> names;
 
-    private Pane draggedNode;
-
-    private double mouseX, mouseY;
+    private javafx.scene.Node checkedNode;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -37,7 +35,7 @@ public class Controller implements Initializable {
         names = new HashMap<>();
         BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader("src/main/java/chess/model/DefaultState.data"));
+            reader = new BufferedReader(new FileReader("data/DefaultState.data"));
             String line = reader.readLine();
             while (line != null) {
                 var splittedLine = line.split(":");
@@ -51,7 +49,7 @@ public class Controller implements Initializable {
         }
 
         try {
-            reader = new BufferedReader(new FileReader("src/main/java/chess/model/Names.data"));
+            reader = new BufferedReader(new FileReader("data/Names.data"));
             String line = reader.readLine();
             while (line != null) {
                 var splittedLine = line.split(":");
@@ -79,37 +77,37 @@ public class Controller implements Initializable {
     private void addPane(int colIndex, int rowIndex) {
         Pane pane = spawnChessman(colIndex, rowIndex);
 
-        pane.setOnMousePressed(e -> {
-            javafx.scene.Node source = (javafx.scene.Node)e.getSource();
-            Pane background = (Pane) table.getChildren().filtered(p -> p.getStyleClass().contains("square")).get(colIndex * 8 + rowIndex);
-            System.out.println(background);
-            background.setStyle(background.getStyle() + "-fx-border-color: chocolate;");
-            System.out.printf("Mouse clicked cell [%d, %d]%n", colIndex, rowIndex);
-            Chessman chessman = ((Node)source.getUserData()).getChessman();
-            if (chessman != null) {
-                System.out.println(chessman.getName() + " " + chessman.getColor());
+        pane.setOnMouseClicked(e -> {
+            Pane background;
+            if (checkedNode == null) {
+                checkedNode = (javafx.scene.Node) e.getSource();
+                System.out.printf("Mouse clicked cell [%d, %d]%n", colIndex, rowIndex);
+                background = (Pane) table.getChildren().filtered(p -> p.getStyleClass().contains("square")).get(colIndex * 8 + rowIndex);
+                background.setStyle(background.getStyle() + "-fx-border-color: chocolate;");
+                if (((Node) checkedNode.getUserData()).getChessman() != null) {
+                    System.out.println(((Node) checkedNode.getUserData()).getChessman().getName() + " " +
+                                       ((Node) checkedNode.getUserData()).getChessman().getColor());
+                }
+                else {
+                    System.out.println("No chessman on this place");
+                }
             }
             else {
-                System.out.println("No chessman on this place");
-            }
+                background = (Pane) table.getChildren()
+                        .filtered(p -> p.getStyleClass()
+                        .contains("square"))
+                        .get(((Node) checkedNode.getUserData()).getCoordX() * 8 +
+                             ((Node) checkedNode.getUserData()).getCoordY());
+                background.setStyle(background.getStyle().replace("-fx-border-color: chocolate;", ""));
+                if (checkedNode != e.getSource()) {
+                    Chessman swap = ((Node) ((Pane) e.getSource()).getUserData()).getChessman();
+                    ((Node) ((Pane) e.getSource()).getUserData()).setChessman(((Node) checkedNode.getUserData()).getChessman());
+                    ((Node) checkedNode.getUserData()).setChessman(swap);
 
-            mouseX = e.getX();
-            mouseY = e.getY();
-        });
-        pane.setOnMouseReleased(e -> {
-            javafx.scene.Node source = (javafx.scene.Node)e.getSource();
-            Pane background = (Pane) table.getChildren().filtered(p -> p.getStyleClass().contains("square")).get(colIndex * 8 + rowIndex);
-            background.setStyle(background.getStyle().replace("-fx-border-color: chocolate;", ""));
-            draggedNode = null;
-        });
-        pane.setOnDragDetected(e -> {
-            draggedNode = (Pane) e.getSource();
-        });
-        pane.setOnMouseDragged(e -> {
-            if (draggedNode != null) {
-                draggedNode.toFront();
-                draggedNode.setTranslateX(e.getX() + draggedNode.getTranslateX() - mouseX);
-                draggedNode.setTranslateY(e.getY() + draggedNode.getTranslateY() - mouseY);
+                    ((Pane) e.getSource()).getChildren().addAll(((Pane) checkedNode).getChildren());
+                    ((Pane) checkedNode).getChildren().removeAll();
+                }
+                checkedNode = null;
             }
         });
 
@@ -128,6 +126,8 @@ public class Controller implements Initializable {
         String chessmanCode = state.get(Character.toString((char) (colIndex + 65)) + (rowIndex + 1));
         Chessman chessman = null;
         Text text = new Text();
+        Pane movable = new StackPane();
+
         if (chessmanCode != null) {
             var code = chessmanCode.split(",");
             String name = names.get(code[0]);
@@ -143,11 +143,11 @@ public class Controller implements Initializable {
                 text.setFill(Color.BLACK);
                 text.setStyle(text.getStyle() + "-fx-stroke: white;");
             }
+
+            movable.getChildren().add(text);
+            StackPane.setAlignment(text, Pos.CENTER);
         }
-        Pane movable = new StackPane();
-        movable.setUserData(new Node(chessman, false));
-        movable.getChildren().add(text);
-        StackPane.setAlignment(text, Pos.CENTER);
+        movable.setUserData(new Node(chessman, false, colIndex, rowIndex));
 
         return movable;
     }
