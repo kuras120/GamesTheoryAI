@@ -1,5 +1,7 @@
 package chess.model;
 
+import javafx.scene.layout.GridPane;
+
 public class Node {
 
     private Chessman chessman;
@@ -14,6 +16,18 @@ public class Node {
         this.selected = selected;
         this.coordX = coordX;
         this.coordY = coordY;
+    }
+
+    public javafx.scene.Node getBackgroundNode(GridPane table, String clazz, Integer coordX, Integer coordY) {
+        if (coordX == null || coordY == null) {
+            coordX = this.coordX;
+            coordY = this.coordY;
+        }
+        var children = table.getChildren();
+        if (clazz != null) {
+            children = children.filtered(p -> p.getStyleClass().contains(clazz));
+        }
+        return children.get(coordX * 8 + coordY);
     }
 
     public Chessman getChessman() {

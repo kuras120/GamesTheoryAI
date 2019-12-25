@@ -2,6 +2,7 @@ package chess;
 
 import chess.model.Chessman;
 import chess.model.Node;
+import chess.utils.DataReader;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -11,10 +12,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -31,34 +29,11 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        state = new HashMap<>();
-        names = new HashMap<>();
-        BufferedReader reader;
-        try {
-            reader = new BufferedReader(new FileReader("data/DefaultState.data"));
-            String line = reader.readLine();
-            while (line != null) {
-                var splittedLine = line.split(":");
-                state.put(splittedLine[0], splittedLine[1]);
-                line = reader.readLine();
-            }
-        }
-        catch (Exception ex) {
-            System.out.println(ex.getMessage());
-            return;
-        }
+        state = DataReader.readModel("data/DefaultState.data");
+        names = DataReader.readModel("data/Names.data");
 
-        try {
-            reader = new BufferedReader(new FileReader("data/Names.data"));
-            String line = reader.readLine();
-            while (line != null) {
-                var splittedLine = line.split(":");
-                names.put(splittedLine[0], splittedLine[1]);
-                line = reader.readLine();
-            }
-        }
-        catch (Exception ex) {
-            System.out.println(ex.getMessage());
+        if (state == null || names == null) {
+            System.out.println("Error in model loading has occurred");
             return;
         }
 
@@ -82,7 +57,7 @@ public class Controller implements Initializable {
             if (checkedNode == null) {
                 checkedNode = (javafx.scene.Node) e.getSource();
                 System.out.printf("Mouse clicked cell [%d, %d]%n", colIndex, rowIndex);
-                background = (Pane) table.getChildren().filtered(p -> p.getStyleClass().contains("square")).get(colIndex * 8 + rowIndex);
+                background = (Pane) ((Node) checkedNode.getUserData()).getBackgroundNode(table, "square", colIndex, rowIndex);
                 background.setStyle(background.getStyle() + "-fx-border-color: chocolate;");
                 if (((Node) checkedNode.getUserData()).getChessman() != null) {
                     System.out.println(((Node) checkedNode.getUserData()).getChessman().getName() + " " +
@@ -93,11 +68,7 @@ public class Controller implements Initializable {
                 }
             }
             else {
-                background = (Pane) table.getChildren()
-                        .filtered(p -> p.getStyleClass()
-                        .contains("square"))
-                        .get(((Node) checkedNode.getUserData()).getCoordX() * 8 +
-                             ((Node) checkedNode.getUserData()).getCoordY());
+                background = (Pane) ((Node) checkedNode.getUserData()).getBackgroundNode(table, "square", null, null);
                 background.setStyle(background.getStyle().replace("-fx-border-color: chocolate;", ""));
                 if (checkedNode != e.getSource()) {
                     Chessman swap = ((Node) ((Pane) e.getSource()).getUserData()).getChessman();
