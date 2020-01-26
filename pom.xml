@@ -13,6 +13,7 @@
         <maven.compiler.target>12</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>12</java.version>
+        <launcher>chess.Main</launcher>
     </properties>
 
     <dependencies>
@@ -83,7 +84,7 @@
                     <noManPages>true</noManPages>
                     <jlinkImageName>ChessAI</jlinkImageName>
                     <launcher>play-chess</launcher>
-                    <mainClass>chess.Main</mainClass>
+                    <mainClass>${launcher}</mainClass>
                 </configuration>
             </plugin>
         </plugins>
