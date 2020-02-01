@@ -2,7 +2,7 @@ package chess;
 
 import chess.model.Chessman;
 import chess.model.Node;
-import chess.utils.DataReader;
+import chess.util.DataReader;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
