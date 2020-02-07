@@ -4,7 +4,8 @@ import javafx.scene.Node;
 
 public interface IFifoQueue {
     void addFirst(Node node);
-    boolean isAllEqual(String pattern);
+    String isAllEqual(String pattern);
     void clear();
     boolean isFull();
+    void print();
 }
