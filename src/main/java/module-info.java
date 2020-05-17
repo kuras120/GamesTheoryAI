@@ -5,4 +5,7 @@ module chessai {
 
     opens chess to javafx.fxml;
     exports chess;
+
+    opens tictactoe to javafx.fxml;
+    exports tictactoe;
 }

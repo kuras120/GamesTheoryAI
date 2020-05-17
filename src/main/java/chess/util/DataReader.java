@@ -1,4 +1,4 @@
-package chess.utils;
+package chess.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

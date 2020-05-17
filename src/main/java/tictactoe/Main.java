@@ -1,4 +1,4 @@
-package chess;
+package tictactoe;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,8 +10,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/Chess.fxml"));
-        primaryStage.setTitle("Chess AI");
+        Parent root = FXMLLoader.load(getClass().getResource("/TicTacToe.fxml"));
+        primaryStage.setTitle("Tic Tac Toe AI");
         primaryStage.setScene(new Scene(root, 1600, 900));
         primaryStage.setResizable(false);
         primaryStage.show();
