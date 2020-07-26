@@ -31,3 +31,6 @@ target/
 
 #IML files
 *.iml
+
+#Python
+env/

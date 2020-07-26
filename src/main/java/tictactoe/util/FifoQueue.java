@@ -7,8 +7,7 @@ import javafx.scene.shape.Line;
 
 public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
 
-    private int limit;
-    private String markName;
+    private final int limit;
 
     public FifoQueue(int limit) {
         this.limit = limit;
@@ -25,11 +24,20 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     @Override
     public String isAllEqual(String pattern) {
         String toCompare = ((tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
+        int freeNodeChecker = 0;
         if (!toCompare.equals("")) {
             for(Node element:this) {
+//                System.out.println(((tictactoe.model.Node) element.getUserData()).getMarkName());
                 if(!((tictactoe.model.Node) element.getUserData()).getMarkName().equals(toCompare)) return null;
-            };
+                if (!((tictactoe.model.Node) element.getUserData()).isChecked()) freeNodeChecker++;
+            }
+//            System.out.println("--------------------------------------------------------------------------------");
+            if (freeNodeChecker == 0) {
+//                System.out.println("BLEH");
+                return null;
+            }
             for (Node element:this) {
+                ((tictactoe.model.Node) element.getUserData()).setChecked(true);
                 StackPane pane = (StackPane) element;
                 pane.getChildren().add(createLine(pattern, pane));
             }
