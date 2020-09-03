@@ -89,7 +89,7 @@ public class Controller implements Initializable {
             Process process;
             do {
                 Random random = new Random();
-                int randInt = random.nextInt(15) + 1;
+                int randInt = random.nextInt(16) + 1;
                 System.out.println(randInt);
                 try {
                     process = Runtime.getRuntime().exec(
