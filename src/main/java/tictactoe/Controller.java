@@ -232,12 +232,14 @@ public class Controller implements Initializable {
             if (element instanceof StackPane) {
                 ((Pane) element).getChildren().clear();
                 ((Node) element.getUserData()).setMarkName("");
+                ((Node) element.getUserData()).setChecked(false);
             }
         }
         points = new HashMap<>() {{
             put("X", 0);
             put("O", 0);
         }};
+        aiMap = new String[4][4];
         winnerField.setText("");
         table.setDisable(false);
         turn = true;

@@ -12,8 +12,11 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/TicTacToe.fxml"));
         primaryStage.setTitle("Tic Tac Toe AI");
-        primaryStage.setScene(new Scene(root, 1600, 900));
-        primaryStage.setResizable(false);
+        primaryStage.setScene(new Scene(root));
+        primaryStage.setMinWidth(1280);
+        primaryStage.setMinHeight(720);
+        primaryStage.setMaxWidth(1920);
+        primaryStage.setMaxHeight(1080);
         primaryStage.show();
     }
 
