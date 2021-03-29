@@ -35,3 +35,6 @@ target/
 #Python
 env/
 venv/
+
+#Auto-generated POMs
+dependency-reduced-pom.xml
