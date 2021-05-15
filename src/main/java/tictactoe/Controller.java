@@ -14,6 +14,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 import tictactoe.model.Node;
 import tictactoe.util.FifoQueue;
 import tictactoe.util.IFifoQueue;
@@ -23,7 +24,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+@Slf4j
 public class Controller implements Initializable {
 
     @FXML
@@ -45,8 +48,27 @@ public class Controller implements Initializable {
 
     private boolean repeat;
 
+    private Process process;
+
+    private static final String AI_PATH = "src/main/java/tictactoe/AI";
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try {
+            process = Runtime.getRuntime().exec(
+                AI_PATH +
+                "/venv/bin/pip install -r " +
+                AI_PATH +
+                "/requirements.txt"
+            );
+            if (!process.waitFor(5, TimeUnit.SECONDS)) {
+                process.destroy();
+                throw new InterruptedException("Time exceeded for AI env installation process");
+            }
+            log.info("AI env installation completed");
+        } catch (IOException | InterruptedException ex) {
+            log.warn(ex.getMessage());
+        }
         turn = true;
         repeat = false;
         points = new HashMap<>() {{
@@ -70,6 +92,7 @@ public class Controller implements Initializable {
                 }
             }
         }
+        log.info("Initialization completed");
     }
 
     private String buildArguments() {
@@ -86,35 +109,36 @@ public class Controller implements Initializable {
     private void changeTurn() {
         turn = !turn;
         if (!turn && AICheckbox.isSelected()) {
-            Process process;
             do {
                 Random random = new Random();
                 int randInt = random.nextInt(16) + 1;
-                System.out.println(randInt);
+                log.info("Random move: " + randInt);
                 try {
                     process = Runtime.getRuntime().exec(
-                            "python3 src/main/java/tictactoe/AI/process.py " +
-                                    aiMap.length + " " +
-                                    buildArguments() + " " +
-                                    points.get("X") + " " +
-                                    points.get("O")
+                        AI_PATH +
+                        "/venv/bin/python " +
+                        AI_PATH +
+                        "/process.py " +
+                        aiMap.length + " " +
+                        buildArguments() + " " +
+                        points.get("X") + " " +
+                        points.get("O")
                     );
-                    System.out.println(process.getOutputStream().toString());
                     BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
                     BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                     // Read the output from the command
-                    System.out.println("Here is the standard output of the command:\n");
-                    String s = null;
+                    log.debug("Here is the standard output of the command:\n");
+                    String s;
                     while ((s = stdInput.readLine()) != null) {
-                        System.out.println(s);
+                        log.info(s);
                     }
                     // Read any errors from the attempted command
-                    System.out.println("Here is the standard error of the command (if any):\n");
+                    log.debug("Here is the standard error of the command (if any):\n");
                     while ((s = stdError.readLine()) != null) {
-                        System.out.println(s);
+                        log.debug(s);
                     }
                 } catch (IOException ex) {
-                    System.out.println(ex.getMessage());
+                    log.warn(ex.getMessage());
                 }
                 table.getChildren().get(randInt).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0,
                         0, MouseButton.PRIMARY, 1, true, true, true, true, true, true,
