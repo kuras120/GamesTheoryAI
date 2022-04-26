@@ -53,7 +53,7 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
 
     @Override
     public boolean isFull() {
-        return super.size() == this.limit;
+        return super.size() >= this.limit;
     }
 
     @Override

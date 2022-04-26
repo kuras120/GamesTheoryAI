@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import tictactoe.model.Node;
 import tictactoe.util.FifoQueue;
 import tictactoe.util.IFifoQueue;
+import tictactoe.util.LoggerUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -61,7 +62,8 @@ public class Controller implements Initializable {
                 AI_PATH +
                 "/requirements.txt"
             );
-            if (!process.waitFor(5, TimeUnit.SECONDS)) {
+//            LoggerUtils.processLog(process);
+            if (!process.waitFor(1, TimeUnit.MINUTES)) {
                 process.destroy();
                 throw new InterruptedException("Time exceeded for AI env installation process");
             }
