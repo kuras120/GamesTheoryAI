@@ -26,6 +26,9 @@ jobs:
       - run:
           name: "Build application"
           command: mvn install
+      - run:
+          name: "Upload coverage reports"
+          command: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Java -r target/site/jacoco/jacoco.xml
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
