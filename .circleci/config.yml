@@ -40,4 +40,4 @@ workflows:
             branches:
               only:
                 - master
-                - circleci-test
+                - tic-tac-toe
