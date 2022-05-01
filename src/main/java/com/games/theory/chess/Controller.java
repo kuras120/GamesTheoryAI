@@ -62,8 +62,7 @@ public class Controller implements Initializable {
                 background = (Pane) ((Node) checkedNode.getUserData()).getBackgroundNode(table, "square", colIndex, rowIndex);
                 background.setStyle(background.getStyle() + "-fx-border-color: chocolate;");
                 if (((Node) checkedNode.getUserData()).getChessman() != null) {
-                    log.info(
-                        "{} {}",
+                    log.info("{} - {}",
                         ((Node) checkedNode.getUserData()).getChessman().getName(),
                         ((Node) checkedNode.getUserData()).getChessman().getColor()
                     );

@@ -18,29 +18,30 @@ import lombok.extern.slf4j.Slf4j;
 import com.games.theory.tictactoe.model.Node;
 import com.games.theory.tictactoe.util.FifoQueue;
 import com.games.theory.tictactoe.util.IFifoQueue;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class Controller implements Initializable {
 
-    @FXML
-    private GridPane table;
+    @FXML private GridPane table;
+    @FXML private CheckBox AICheckbox;
+    @FXML private TextArea winnerField;
 
-    @FXML
-    private CheckBox AICheckbox;
+    private static final String AI_PATH = "src/main/java/com/games/theory/tictactoe/AI";
 
-    @FXML
-    private TextArea winnerField;
+    private List<Pair<String, Pair<List<Integer>, Integer>>> observers;
 
     private Map<String, Integer> points;
 
-    private List<Pair<String, Pair<List<Integer>, Integer>>> observers;
 
     private String[][] aiMap;
 
@@ -50,7 +51,6 @@ public class Controller implements Initializable {
 
     private Process process;
 
-    private static final String AI_PATH = "src/main/java/com/games/theory/tictactoe/AI";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -68,7 +68,7 @@ public class Controller implements Initializable {
             }
             log.info("AI env installation completed");
         } catch (IOException | InterruptedException ex) {
-            log.warn("{}", ex.getMessage());
+            log.error("AI error {}", ex.getMessage());
         }
         turn = true;
         repeat = false;
@@ -78,7 +78,7 @@ public class Controller implements Initializable {
         }};
         aiMap = new String[4][4];
         observers = Arrays.asList(
-                new Pair<>("column", new Pair<>(Arrays.asList(1), 1)),
+                new Pair<>("column", new Pair<>(List.of(1), 1)),
                 new Pair<>("row", new Pair<>(Arrays.asList(1, 2, 3, 4), 4)),
                 new Pair<>("diagonal-to-right", new Pair<>(Arrays.asList(1, 2, 5), 5)),
                 new Pair<>("diagonal-to-left", new Pair<>(Arrays.asList(3, 4, 8), 3))
@@ -100,7 +100,7 @@ public class Controller implements Initializable {
         StringBuilder stringBuilder = new StringBuilder();
         for (var row:aiMap) {
             for (var mark:row) {
-                stringBuilder.append(mark).append(" ");
+                stringBuilder.append(mark).append(' ');
             }
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
@@ -110,11 +110,10 @@ public class Controller implements Initializable {
     private void changeTurn() {
         turn = !turn;
         if (!turn && AICheckbox.isSelected()) {
-            Random random;
-            BufferedReader stdInput;
-            BufferedReader stdError;
+            Random random = new Random();
+            String stdInput;
+            String stdError;
             do {
-                random = new Random();
                 int randInt = random.nextInt(16) + 1;
                 log.info("Random move: {}", randInt);
                 try {
@@ -128,21 +127,14 @@ public class Controller implements Initializable {
                         points.get("X") + " " +
                         points.get("O")
                     );
-                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                    stdInput = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
+                    stdError = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
                     // Read the output from the command
-                    log.debug("Here is the standard output of the command:\n");
-                    String s;
-                    while ((s = stdInput.readLine()) != null) {
-                        log.info("{}", s);
-                    }
+                    log.info("Here is the standard output of the command:\n{}", stdInput);
                     // Read any errors from the attempted command
-                    log.debug("Here is the standard error of the command (if any):\n");
-                    while ((s = stdError.readLine()) != null) {
-                        log.debug("{}", s);
-                    }
+                    log.debug("Here is the standard error of the command (if any):\n{}", stdError);
                 } catch (IOException ex) {
-                    log.warn("{}", ex.getMessage());
+                    log.error("AI error {}", ex.getMessage());
                 }
                 table.getChildren().get(randInt).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0,
                         0, MouseButton.PRIMARY, 1, true, true, true, true, true, true,
@@ -226,8 +218,8 @@ public class Controller implements Initializable {
         Pane pane = new StackPane();
         pane.setUserData(new Node(colIndex, rowIndex));
         pane.setOnMouseClicked(e -> {
-            Node node = ((Node)pane.getUserData());
-            if (node.getMarkName().equals("")) {
+            Node node = (Node)pane.getUserData();
+            if (node.getMarkName().isEmpty()) {
                 Text text = new Text();
                 text.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 40));
                 String mark;

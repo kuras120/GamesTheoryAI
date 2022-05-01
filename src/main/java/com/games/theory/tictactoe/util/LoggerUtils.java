@@ -1,27 +1,22 @@
 package com.games.theory.tictactoe.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
+@UtilityClass
 public class LoggerUtils {
 
   public static void processLog(Process process) throws IOException {
-    BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-    BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+    String stdInput = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
+    String stdError = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
     // Read the output from the command
-    log.debug("Here is the standard output of the command:\n");
-    String s;
-    while ((s = stdInput.readLine()) != null) {
-      log.info("{}", s);
-    }
+    log.info("Here is the standard output of the command:\n{}", stdInput);
     // Read any errors from the attempted command
-    log.debug("Here is the standard error of the command (if any):\n");
-    while ((s = stdError.readLine()) != null) {
-      log.debug("{}", s);
-    }
+    log.debug("Here is the standard error of the command (if any):\n{}", stdError);
   }
 }

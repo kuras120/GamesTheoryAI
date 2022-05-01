@@ -27,15 +27,12 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     public String isAllEqual(String pattern) {
         String toCompare = ((com.games.theory.tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
         int freeNodeChecker = 0;
-        if (!"".equals(toCompare)) {
+        if (!toCompare.isEmpty()) {
             for(Node element:this) {
-//                System.out.println(((com.games.theory.tictactoe.model.Node) element.getUserData()).getMarkName());
                 if(!((com.games.theory.tictactoe.model.Node) element.getUserData()).getMarkName().equals(toCompare)) return null;
                 if (!((com.games.theory.tictactoe.model.Node) element.getUserData()).isChecked()) freeNodeChecker++;
             }
-//            System.out.println("--------------------------------------------------------------------------------");
             if (freeNodeChecker == 0) {
-//                System.out.println("BLEH");
                 return null;
             }
             for (Node element:this) {
@@ -57,7 +54,7 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     public void print() {
         for(var item:this) {
             var node = ((com.games.theory.tictactoe.model.Node)item.getUserData());
-            log.info("{} {} {}", node.getColIndex(), node.getRowIndex(), node.getMarkName());
+            log.info("{} - {} - {}", node.getColIndex(), node.getRowIndex(), node.getMarkName());
         }
         log.info("\n");
     }
