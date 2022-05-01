@@ -28,7 +28,7 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
         String toCompare = ((com.games.theory.tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
         int freeNodeChecker = 0;
         if (!toCompare.isEmpty()) {
-            for(Node element:this) {
+            for (Node element:this) {
                 if(!((com.games.theory.tictactoe.model.Node) element.getUserData()).getMarkName().equals(toCompare)) return null;
                 if (!((com.games.theory.tictactoe.model.Node) element.getUserData()).isChecked()) freeNodeChecker++;
             }
@@ -52,7 +52,7 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
 
     @Override
     public void print() {
-        for(var item:this) {
+        for (var item:this) {
             var node = ((com.games.theory.tictactoe.model.Node)item.getUserData());
             log.info("{} - {} - {}", node.getColIndex(), node.getRowIndex(), node.getMarkName());
         }
@@ -60,13 +60,13 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     }
 
     private Line createLine(String pattern, StackPane pane) {
-        switch(pattern) {
+        switch (pattern) {
             case "column":
                 return new Line(pane.getLayoutX() + pane.getWidth(), pane.getLayoutY(), pane.getLayoutX() +
                                    pane.getWidth(), pane.getLayoutY() - pane.getHeight());
             case "row":
                 return new Line(pane.getLayoutX(), pane.getLayoutY() - pane.getHeight(), pane.getLayoutX() +
-                                pane.getWidth(),pane.getLayoutY() - pane.getHeight());
+                                pane.getWidth(), pane.getLayoutY() - pane.getHeight());
             case "diagonal-to-right":
                 return new Line(pane.getLayoutX() + pane.getWidth(), pane.getLayoutY(), pane.getLayoutX(),
                                pane.getLayoutY() - pane.getHeight());

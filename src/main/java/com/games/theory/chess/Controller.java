@@ -2,7 +2,7 @@ package com.games.theory.chess;
 
 import com.games.theory.chess.model.Chessman;
 import com.games.theory.chess.model.Node;
-import com.games.theory.chess.util.DataReader;
+import com.games.theory.chess.util.DataReaderUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -10,7 +10,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
@@ -20,8 +23,7 @@ import java.util.ResourceBundle;
 @Slf4j
 public class Controller implements Initializable {
 
-    @FXML
-    private GridPane table;
+    @FXML private GridPane table;
 
     private Map<String, String> state;
 
@@ -31,8 +33,8 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        state = DataReader.readModel("data/DefaultState.data");
-        names = DataReader.readModel("data/Names.data");
+        state = DataReaderUtils.readModel("data/DefaultState.data");
+        names = DataReaderUtils.readModel("data/Names.data");
 
         if (state == null || names == null) {
             log.error("Error in model loading has occurred");
@@ -62,7 +64,8 @@ public class Controller implements Initializable {
                 background = (Pane) ((Node) checkedNode.getUserData()).getBackgroundNode(table, "square", colIndex, rowIndex);
                 background.setStyle(background.getStyle() + "-fx-border-color: chocolate;");
                 if (((Node) checkedNode.getUserData()).getChessman() != null) {
-                    log.info("{} - {}",
+                    log.info(
+                        "{} - {}",
                         ((Node) checkedNode.getUserData()).getChessman().getName(),
                         ((Node) checkedNode.getUserData()).getChessman().getColor()
                     );

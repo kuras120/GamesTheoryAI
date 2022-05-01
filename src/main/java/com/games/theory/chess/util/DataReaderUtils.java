@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Slf4j
 @UtilityClass
-public class DataReader {
+public class DataReaderUtils {
 
     public static Map<String, String> readModel(String model) {
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(model))) {

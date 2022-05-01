@@ -19,11 +19,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +38,6 @@ public class Controller implements Initializable {
 
     private Map<String, Integer> points;
 
-
     private String[][] aiMap;
 
     private boolean turn;
@@ -48,7 +45,6 @@ public class Controller implements Initializable {
     private boolean repeat;
 
     private Process process;
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -200,7 +196,6 @@ public class Controller implements Initializable {
                     }
                     column = node.getColIndex();
                     row = node.getRowIndex();
-//                    System.out.println(node.getColIndex() + " " + node.getRowIndex() + " " + node.getMarkName());
                 }
             }
         }
@@ -211,7 +206,7 @@ public class Controller implements Initializable {
         Pane pane = new StackPane();
         pane.setUserData(new Node(colIndex, rowIndex));
         pane.setOnMouseClicked(e -> {
-            Node node = (Node)pane.getUserData();
+            Node node = (Node) pane.getUserData();
             if (node.getMarkName().isEmpty()) {
                 Text text = new Text();
                 text.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 40));
