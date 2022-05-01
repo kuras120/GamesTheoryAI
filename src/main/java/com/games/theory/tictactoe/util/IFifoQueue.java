@@ -1,4 +1,4 @@
-package tictactoe.util;
+package com.games.theory.tictactoe.util;
 
 import javafx.scene.Node;
 

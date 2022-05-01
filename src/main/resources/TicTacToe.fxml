@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 
 <GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/10.0.2-internal"
-          xmlns:fx="http://javafx.com/fxml/1" fx:controller="tictactoe.Controller">
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.games.theory.tictactoe.Controller">
     <rowConstraints>
         <RowConstraints/>
         <RowConstraints minHeight="10.0" prefHeight="50.0"/>

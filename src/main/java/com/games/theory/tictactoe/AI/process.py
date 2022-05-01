@@ -27,7 +27,7 @@ class Process:
             self.__q_table[self.__hash] = []
             for i in range(len(self.__matrix)):
                 self.__q_table[self.__hash].append([])
-                for j in range(len(self.__matrix[i])):
+                for _ in range(len(self.__matrix[i])):
                     self.__q_table[self.__hash][i].append(0)
             with open(absolute_path, 'w') as state:
                 json.dump(self.__q_table, state)

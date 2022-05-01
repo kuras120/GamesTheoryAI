@@ -1,4 +1,4 @@
-package chess;
+package com.games.theory.chess;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

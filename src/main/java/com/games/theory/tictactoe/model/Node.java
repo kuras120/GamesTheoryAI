@@ -1,4 +1,4 @@
-package tictactoe.model;
+package com.games.theory.tictactoe.model;
 
 public class Node {
     private String markName;

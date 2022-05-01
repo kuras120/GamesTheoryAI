@@ -1,4 +1,4 @@
-package tictactoe;
+package com.games.theory.tictactoe;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

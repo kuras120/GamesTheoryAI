@@ -1,4 +1,4 @@
-package chess.model;
+package com.games.theory.chess.model;
 
 import javafx.scene.layout.GridPane;
 

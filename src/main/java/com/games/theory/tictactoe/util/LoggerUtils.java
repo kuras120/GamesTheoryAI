@@ -1,4 +1,4 @@
-package tictactoe.util;
+package com.games.theory.tictactoe.util;
 
 import lombok.extern.slf4j.Slf4j;
 

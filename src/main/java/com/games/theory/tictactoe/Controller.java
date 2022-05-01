@@ -1,4 +1,4 @@
-package tictactoe;
+package com.games.theory.tictactoe;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -15,10 +15,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
-import tictactoe.model.Node;
-import tictactoe.util.FifoQueue;
-import tictactoe.util.IFifoQueue;
-import tictactoe.util.LoggerUtils;
+import com.games.theory.tictactoe.model.Node;
+import com.games.theory.tictactoe.util.FifoQueue;
+import com.games.theory.tictactoe.util.IFifoQueue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,9 +40,9 @@ public class Controller implements Initializable {
 
     private Map<String, Integer> points;
 
-    List<Pair<String, Pair<List<Integer>, Integer>>> observers;
+    private List<Pair<String, Pair<List<Integer>, Integer>>> observers;
 
-    String[][] aiMap;
+    private String[][] aiMap;
 
     private boolean turn;
 
@@ -51,7 +50,7 @@ public class Controller implements Initializable {
 
     private Process process;
 
-    private static final String AI_PATH = "src/main/java/tictactoe/AI";
+    private static final String AI_PATH = "src/main/java/com/games/theory/tictactoe/AI";
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

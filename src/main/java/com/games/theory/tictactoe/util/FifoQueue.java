@@ -1,4 +1,4 @@
-package tictactoe.util;
+package com.games.theory.tictactoe.util;
 
 import java.util.LinkedList;
 import javafx.scene.Node;
@@ -23,13 +23,13 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
 
     @Override
     public String isAllEqual(String pattern) {
-        String toCompare = ((tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
+        String toCompare = ((com.games.theory.tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
         int freeNodeChecker = 0;
         if (!toCompare.equals("")) {
             for(Node element:this) {
-//                System.out.println(((tictactoe.model.Node) element.getUserData()).getMarkName());
-                if(!((tictactoe.model.Node) element.getUserData()).getMarkName().equals(toCompare)) return null;
-                if (!((tictactoe.model.Node) element.getUserData()).isChecked()) freeNodeChecker++;
+//                System.out.println(((com.games.theory.tictactoe.model.Node) element.getUserData()).getMarkName());
+                if(!((com.games.theory.tictactoe.model.Node) element.getUserData()).getMarkName().equals(toCompare)) return null;
+                if (!((com.games.theory.tictactoe.model.Node) element.getUserData()).isChecked()) freeNodeChecker++;
             }
 //            System.out.println("--------------------------------------------------------------------------------");
             if (freeNodeChecker == 0) {
@@ -37,11 +37,11 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
                 return null;
             }
             for (Node element:this) {
-                ((tictactoe.model.Node) element.getUserData()).setChecked(true);
+                ((com.games.theory.tictactoe.model.Node) element.getUserData()).setChecked(true);
                 StackPane pane = (StackPane) element;
                 pane.getChildren().add(createLine(pattern, pane));
             }
-            return ((tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
+            return ((com.games.theory.tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
         }
         return null;
     }
@@ -59,7 +59,7 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     @Override
     public void print() {
         for(var item:this) {
-            var node = ((tictactoe.model.Node)item.getUserData());
+            var node = ((com.games.theory.tictactoe.model.Node)item.getUserData());
             System.out.println(node.getColIndex() + " " + node.getRowIndex() + " " + node.getMarkName());
         }
         System.out.println("\n");

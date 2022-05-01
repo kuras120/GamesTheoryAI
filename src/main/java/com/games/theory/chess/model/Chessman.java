@@ -1,4 +1,4 @@
-package chess.model;
+package com.games.theory.chess.model;
 
 public class Chessman {
 
@@ -10,8 +10,8 @@ public class Chessman {
 
     public Chessman(String name, String color, String code) {
         this.name = name;
-        if (color.equals("W")) this.color = "white";
-        else if (color.equals("B")) this.color = "black";
+        if ("W".equals(color)) this.color = "white";
+        else if ("B".equals(color)) this.color = "black";
         this.code = code;
     }
 

@@ -1,8 +1,8 @@
-package chess;
+package com.games.theory.chess;
 
-import chess.model.Chessman;
-import chess.model.Node;
-import chess.util.DataReader;
+import com.games.theory.chess.model.Chessman;
+import com.games.theory.chess.model.Node;
+import com.games.theory.chess.util.DataReader;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
