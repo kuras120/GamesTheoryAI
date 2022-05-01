@@ -1,5 +1,9 @@
 package com.games.theory.tictactoe;
 
+import com.games.theory.tictactoe.model.Node;
+import com.games.theory.tictactoe.util.FifoQueue;
+import com.games.theory.tictactoe.util.IFifoQueue;
+import com.games.theory.tictactoe.util.LoggerUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -15,15 +19,9 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
-import com.games.theory.tictactoe.model.Node;
-import com.games.theory.tictactoe.util.FifoQueue;
-import com.games.theory.tictactoe.util.IFifoQueue;
 import org.apache.commons.io.IOUtils;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -61,12 +59,14 @@ public class Controller implements Initializable {
                 AI_PATH +
                 "/requirements.txt"
             );
-//            LoggerUtils.processLog(process);
             if (!process.waitFor(1, TimeUnit.MINUTES)) {
                 process.destroy();
                 throw new InterruptedException("Time exceeded for AI env installation process");
+            } else {
+                LoggerUtils.processLog(process);
+                log.info("AI env installation completed");
             }
-            log.info("AI env installation completed");
+
         } catch (IOException | InterruptedException ex) {
             log.error("AI error {}", ex.getMessage());
         }
@@ -111,8 +111,6 @@ public class Controller implements Initializable {
         turn = !turn;
         if (!turn && AICheckbox.isSelected()) {
             Random random = new Random();
-            String stdInput;
-            String stdError;
             do {
                 int randInt = random.nextInt(16) + 1;
                 log.info("Random move: {}", randInt);
@@ -127,12 +125,7 @@ public class Controller implements Initializable {
                         points.get("X") + " " +
                         points.get("O")
                     );
-                    stdInput = IOUtils.toString(process.getInputStream(), StandardCharsets.UTF_8);
-                    stdError = IOUtils.toString(process.getErrorStream(), StandardCharsets.UTF_8);
-                    // Read the output from the command
-                    log.info("Here is the standard output of the command:\n{}", stdInput);
-                    // Read any errors from the attempted command
-                    log.debug("Here is the standard error of the command (if any):\n{}", stdError);
+                    LoggerUtils.processLog(process);
                 } catch (IOException ex) {
                     log.error("AI error {}", ex.getMessage());
                 }
