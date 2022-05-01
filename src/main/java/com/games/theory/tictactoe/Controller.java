@@ -68,7 +68,7 @@ public class Controller implements Initializable {
             }
             log.info("AI env installation completed");
         } catch (IOException | InterruptedException ex) {
-            log.warn(ex.getMessage());
+            log.warn("{}", ex.getMessage());
         }
         turn = true;
         repeat = false;
@@ -110,10 +110,13 @@ public class Controller implements Initializable {
     private void changeTurn() {
         turn = !turn;
         if (!turn && AICheckbox.isSelected()) {
+            Random random;
+            BufferedReader stdInput;
+            BufferedReader stdError;
             do {
-                Random random = new Random();
+                random = new Random();
                 int randInt = random.nextInt(16) + 1;
-                log.info("Random move: " + randInt);
+                log.info("Random move: {}", randInt);
                 try {
                     process = Runtime.getRuntime().exec(
                         AI_PATH +
@@ -125,21 +128,21 @@ public class Controller implements Initializable {
                         points.get("X") + " " +
                         points.get("O")
                     );
-                    BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                    stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
                     // Read the output from the command
                     log.debug("Here is the standard output of the command:\n");
                     String s;
                     while ((s = stdInput.readLine()) != null) {
-                        log.info(s);
+                        log.info("{}", s);
                     }
                     // Read any errors from the attempted command
                     log.debug("Here is the standard error of the command (if any):\n");
                     while ((s = stdError.readLine()) != null) {
-                        log.debug(s);
+                        log.debug("{}", s);
                     }
                 } catch (IOException ex) {
-                    log.warn(ex.getMessage());
+                    log.warn("{}", ex.getMessage());
                 }
                 table.getChildren().get(randInt).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0,
                         0, MouseButton.PRIMARY, 1, true, true, true, true, true, true,

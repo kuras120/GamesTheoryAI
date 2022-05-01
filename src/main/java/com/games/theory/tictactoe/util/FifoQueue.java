@@ -4,7 +4,9 @@ import java.util.LinkedList;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
 
     private final int limit;
@@ -25,7 +27,7 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     public String isAllEqual(String pattern) {
         String toCompare = ((com.games.theory.tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
         int freeNodeChecker = 0;
-        if (!toCompare.equals("")) {
+        if (!"".equals(toCompare)) {
             for(Node element:this) {
 //                System.out.println(((com.games.theory.tictactoe.model.Node) element.getUserData()).getMarkName());
                 if(!((com.games.theory.tictactoe.model.Node) element.getUserData()).getMarkName().equals(toCompare)) return null;
@@ -47,11 +49,6 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     }
 
     @Override
-    public void clear() {
-        super.clear();
-    }
-
-    @Override
     public boolean isFull() {
         return super.size() >= this.limit;
     }
@@ -60,9 +57,9 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     public void print() {
         for(var item:this) {
             var node = ((com.games.theory.tictactoe.model.Node)item.getUserData());
-            System.out.println(node.getColIndex() + " " + node.getRowIndex() + " " + node.getMarkName());
+            log.info("{} {} {}", node.getColIndex(), node.getRowIndex(), node.getMarkName());
         }
-        System.out.println("\n");
+        log.info("\n");
     }
 
     private Line createLine(String pattern, StackPane pane) {

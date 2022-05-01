@@ -16,12 +16,12 @@ public class LoggerUtils {
     log.debug("Here is the standard output of the command:\n");
     String s;
     while ((s = stdInput.readLine()) != null) {
-      log.info(s);
+      log.info("{}", s);
     }
     // Read any errors from the attempted command
     log.debug("Here is the standard error of the command (if any):\n");
     while ((s = stdError.readLine()) != null) {
-      log.debug(s);
+      log.debug("{}", s);
     }
   }
 }

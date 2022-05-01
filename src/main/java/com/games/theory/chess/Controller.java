@@ -11,11 +11,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class Controller implements Initializable {
 
     @FXML
@@ -33,7 +35,7 @@ public class Controller implements Initializable {
         names = DataReader.readModel("data/Names.data");
 
         if (state == null || names == null) {
-            System.out.println("Error in model loading has occurred");
+            log.error("Error in model loading has occurred");
             return;
         }
 
@@ -56,15 +58,18 @@ public class Controller implements Initializable {
             Pane background;
             if (checkedNode == null) {
                 checkedNode = (javafx.scene.Node) e.getSource();
-                System.out.printf("Mouse clicked cell [%d, %d]%n", colIndex, rowIndex);
+                log.info("Mouse clicked cell [{}, {}]\n", colIndex, rowIndex);
                 background = (Pane) ((Node) checkedNode.getUserData()).getBackgroundNode(table, "square", colIndex, rowIndex);
                 background.setStyle(background.getStyle() + "-fx-border-color: chocolate;");
                 if (((Node) checkedNode.getUserData()).getChessman() != null) {
-                    System.out.println(((Node) checkedNode.getUserData()).getChessman().getName() + " " +
-                                       ((Node) checkedNode.getUserData()).getChessman().getColor());
+                    log.info(
+                        "{} {}",
+                        ((Node) checkedNode.getUserData()).getChessman().getName(),
+                        ((Node) checkedNode.getUserData()).getChessman().getColor()
+                    );
                 }
                 else {
-                    System.out.println("No chessman on this place");
+                    log.info("No chessman on this place");
                 }
             }
             else {
@@ -106,11 +111,11 @@ public class Controller implements Initializable {
 
             text.setText(name);
             text.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
-            if (code[1].equals("W")) {
+            if ("W".equals(code[1])) {
                 text.setFill(Color.WHITE);
                 text.setStyle(text.getStyle() + "-fx-stroke: black;");
             }
-            else if (code[1].equals("B")) {
+            else if ("B".equals(code[1])) {
                 text.setFill(Color.BLACK);
                 text.setStyle(text.getStyle() + "-fx-stroke: white;");
             }
