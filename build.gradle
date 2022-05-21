@@ -1,0 +1,16 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version "$JAVAFX_PLUGIN_VERSION"
+}
+
+group 'GamesTheory'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+javafx {
+    version = "$JAVAFX_VERSION"
+    modules = ['javafx.fxml']
+}
