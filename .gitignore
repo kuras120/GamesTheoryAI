@@ -38,3 +38,6 @@ venv/
 
 #Auto-generated POMs
 dependency-reduced-pom.xml
+
+# Build
+build/
