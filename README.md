@@ -1,4 +1,4 @@
-# ChessAI
+# GamesTheoryAI
 
 ## Item
 

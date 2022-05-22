@@ -3,7 +3,7 @@ plugins {
     id 'org.openjfx.javafxplugin' version "$JAVAFX_PLUGIN_VERSION"
 }
 
-group 'GamesTheory'
+group 'GamesTheoryAI'
 version '1.0'
 
 repositories {
