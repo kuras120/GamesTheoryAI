@@ -1,11 +1,10 @@
 package com.games.theory.chess.util;
 
+import com.google.common.io.Resources;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,13 +13,13 @@ import java.util.Map;
 public class DataReaderUtils {
 
     public static Map<String, String> readModel(String model) {
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(model))) {
+        try {
+            String text = Resources.toString(Resources.getResource(model), StandardCharsets.UTF_8);
             Map<String, String> map = new HashMap<>();
-            String line = reader.readLine();
-            while (line != null) {
+            String[] lines = text.split("\n");
+            for (var line : lines) {
                 var keyValue = line.split(":");
                 map.put(keyValue[0], keyValue[1]);
-                line = reader.readLine();
             }
             return map;
         }
