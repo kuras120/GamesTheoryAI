@@ -1,5 +1,6 @@
 package com.games.theory.tictactoe;
 
+import com.google.common.io.Resources;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,7 +11,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/TicTacToe.fxml"));
+        Parent root = FXMLLoader.load(Resources.getResource("TicTacToe.fxml"));
         primaryStage.setTitle("Tic Tac Toe AI");
         primaryStage.setScene(new Scene(root));
         primaryStage.setMinWidth(1280);
