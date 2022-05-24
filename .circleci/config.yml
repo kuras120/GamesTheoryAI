@@ -21,11 +21,11 @@ jobs:
           name: "Check java version"
           command: java --version
       - run:
-          name: "Check maven version"
-          command: mvn --version
+          name: "Check gradle version"
+          command: ./gradlew --version
       - run:
           name: "Build application"
-          command: mvn install
+          command: ./gradlew clean build
       - run:
           name: "Upload coverage reports"
           command: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Java -r build/reports/jacoco/test/jacocoTestReport.xml

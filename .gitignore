@@ -41,3 +41,4 @@ dependency-reduced-pom.xml
 # Build
 build/
 .gradle/
+!gradle-wrapper.jar
