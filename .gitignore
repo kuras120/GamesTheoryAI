@@ -23,8 +23,7 @@
 hs_err_pid*
 
 #Intellij config
-.idea/*
-!.idea/runConfigurations
+.idea/
 
 #Compiled things
 target/
@@ -41,3 +40,4 @@ dependency-reduced-pom.xml
 
 # Build
 build/
+.gradle/

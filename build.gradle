@@ -3,9 +3,10 @@ plugins {
     id 'application'
     id 'io.freefair.lombok' version "$LOMBOK_PLUGIN_VERSION"
     id 'org.openjfx.javafxplugin' version "$JAVAFX_PLUGIN_VERSION"
+    id "com.github.johnrengelman.shadow" version "$SHADE_PLUGIN_VERSION"
 }
 
-group 'GamesTheoryAI'
+group 'com.games.theory'
 version '1.0'
 
 repositories {
@@ -13,16 +14,25 @@ repositories {
 }
 
 dependencies {
-    implementation("org.slf4j:slf4j-api:$SLF4J_VERSION")
-    implementation("com.jfoenix:jfoenix:$JFOENIX_VERSION")
-    implementation("commons-io:commons-io:$COMMONS_IO_VERSION")
-    implementation("ch.qos.logback:logback-classic:$LOGBACK_VERSION")
-    testImplementation("org.junit.jupiter:junit-jupiter:$JUNIT_VERSION")
+    implementation "com.jfoenix:jfoenix:$JFOENIX_VERSION"
+    implementation "com.google.guava:guava:$GUAVA_VERSION"
+    implementation "commons-io:commons-io:$COMMONS_IO_VERSION"
+    implementation "ch.qos.logback:logback-classic:$LOGBACK_VERSION"
+    testImplementation "org.junit.jupiter:junit-jupiter:$JUNIT_VERSION"
+}
+
+compileJava {
+    sourceCompatibility = "$JAVA_VERSION"
+    targetCompatibility = "$JAVA_VERSION"
 }
 
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
+}
+
+application {
+    mainClassName = 'com.games.theory.GUI'
 }
 
 javafx {
@@ -36,4 +46,8 @@ jacoco {
 
 jacocoTestReport {
     dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+    }
 }
