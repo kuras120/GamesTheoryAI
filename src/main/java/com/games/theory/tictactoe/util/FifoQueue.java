@@ -4,9 +4,11 @@ import java.util.LinkedList;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@EqualsAndHashCode(callSuper = true)
 public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
 
     private final int limit;

@@ -5,6 +5,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class DataReaderUtils {
         }
         catch (Exception ex) {
             log.error("{}", ex.getMessage());
-            return null;
+            return Collections.emptyMap();
         }
     }
 }

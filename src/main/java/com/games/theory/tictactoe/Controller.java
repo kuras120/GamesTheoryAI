@@ -29,21 +29,15 @@ import java.util.concurrent.TimeUnit;
 public class Controller implements Initializable {
 
     @FXML private GridPane table;
-    @FXML private CheckBox AICheckbox;
+    @FXML private CheckBox aiCheckbox;
     @FXML private TextArea winnerField;
 
     private static final String AI_PATH = "src/main/java/com/games/theory/tictactoe/AI";
-
     private List<Pair<String, Pair<List<Integer>, Integer>>> observers;
-
     private Map<String, Integer> points;
-
     private String[][] aiMap;
-
     private boolean turn;
-
     private boolean repeat;
-
     private Process process;
 
     @Override
@@ -68,10 +62,9 @@ public class Controller implements Initializable {
         }
         turn = true;
         repeat = false;
-        points = new HashMap<>() {{
-            put("X", 0);
-            put("O", 0);
-        }};
+        points = new HashMap<>();
+        points.put("X", 0);
+        points.put("O", 0);
         aiMap = new String[4][4];
         observers = Arrays.asList(
                 new Pair<>("column", new Pair<>(List.of(1), 1)),
@@ -105,7 +98,7 @@ public class Controller implements Initializable {
 
     private void changeTurn() {
         turn = !turn;
-        if (!turn && AICheckbox.isSelected()) {
+        if (!turn && aiCheckbox.isSelected()) {
             Random random = new Random();
             do {
                 int randInt = random.nextInt(16) + 1;
@@ -139,12 +132,11 @@ public class Controller implements Initializable {
         Integer row = null;
         Integer prevLoop = null;
         String won;
-        Map<String, Integer> roundPoints = new HashMap<>() {{
-             put("X", 0);
-             put("O", 0);
-         }};
-        for (int i:iterator.getKey()) {
-            for (int j = i; j < tableList.size(); j += iterator.getValue()) {
+        Map<String, Integer> roundPoints = new HashMap<>();
+        roundPoints.put("X", 0);
+        roundPoints.put("O", 0);
+        for (var i:iterator.getKey()) {
+            for (var j = i; j < tableList.size(); j += iterator.getValue()) {
                 if (tableList.get(j) instanceof StackPane) {
                     Node node = ((Node)tableList.get(j).getUserData());
                     switch (pattern) {
@@ -157,7 +149,7 @@ public class Controller implements Initializable {
                             nodeQue.addFirst(tableList.get(j));
                             break;
                         case "diagonal-to-right":
-                            if (!((Integer) i).equals(prevLoop)) {
+                            if (!i.equals(prevLoop)) {
                                 nodeQue.clear();
                                 prevLoop = i;
                             }
@@ -169,7 +161,7 @@ public class Controller implements Initializable {
                             nodeQue.addFirst(tableList.get(j));
                             break;
                         case "diagonal-to-left":
-                            if (!((Integer) i).equals(prevLoop)) {
+                            if (!i.equals(prevLoop)) {
                                 nodeQue.clear();
                                 prevLoop = i;
                             }
@@ -243,10 +235,9 @@ public class Controller implements Initializable {
                 ((Node) element.getUserData()).setChecked(false);
             }
         }
-        points = new HashMap<>() {{
-            put("X", 0);
-            put("O", 0);
-        }};
+        points = new HashMap<>();
+        points.put("X", 0);
+        points.put("O", 0);
         aiMap = new String[4][4];
         winnerField.setText("");
         table.setDisable(false);
