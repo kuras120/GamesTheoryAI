@@ -1,9 +1,9 @@
 package com.games.theory.tictactoe;
 
 import com.games.theory.tictactoe.model.Node;
-import com.games.theory.tictactoe.util.FifoQueue;
-import com.games.theory.tictactoe.util.IFifoQueue;
-import com.games.theory.tictactoe.util.LoggerUtils;
+import com.games.theory.tictactoe.utils.FifoQueue;
+import com.games.theory.tictactoe.utils.IFifoQueue;
+import com.games.theory.tictactoe.utils.LoggerUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;

@@ -1,4 +1,4 @@
-package com.games.theory.tictactoe.util;
+package com.games.theory.tictactoe.utils;
 
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,0 @@
-numpy
-psutil
-unittest2
-matplotlib
-scikit-learn
-jsbeautifier

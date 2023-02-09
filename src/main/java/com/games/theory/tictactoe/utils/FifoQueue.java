@@ -1,4 +1,4 @@
-package com.games.theory.tictactoe.util;
+package com.games.theory.tictactoe.utils;
 
 import java.util.LinkedList;
 import javafx.scene.Node;

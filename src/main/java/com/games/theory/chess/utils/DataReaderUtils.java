@@ -1,4 +1,4 @@
-package com.games.theory.chess.util;
+package com.games.theory.chess.utils;
 
 import com.google.common.io.Resources;
 import lombok.experimental.UtilityClass;
