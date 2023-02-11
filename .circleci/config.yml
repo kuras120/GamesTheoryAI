@@ -27,7 +27,7 @@ jobs:
           name: "Build application"
           command: ./gradlew clean build
       - run:
-          name: "Upload coverage reports"
+          name: "Upload coverage report"
           command: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
 
 # Invoke jobs via workflows
