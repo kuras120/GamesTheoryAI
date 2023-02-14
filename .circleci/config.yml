@@ -18,9 +18,6 @@ jobs:
           name: "Check current directory"
           command: ls -la
       - run:
-          name: "Check java version"
-          command: java --version
-      - run:
           name: "Check gradle version"
           command: ./gradlew --version
       - run:
