@@ -1,5 +1,7 @@
 package com.games.theory.tictactoe.utils;
 
+import com.games.theory.utils.FifoQueue;
+import com.games.theory.utils.IFifoQueue;
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;

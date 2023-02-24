@@ -1,9 +1,10 @@
-package com.games.theory.chess.utils;
+package com.games.theory.utils;
 
 import com.google.common.io.Resources;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +13,9 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class DataReaderUtils {
+    public static File getScript(String script) {
+        return new File(Resources.getResource(script).getPath());
+    }
 
     public static Map<String, String> readModel(String model) {
         try {

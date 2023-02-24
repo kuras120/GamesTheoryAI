@@ -1,0 +1,32 @@
+tasks.register('downloadGameTheoryRelease', Download)
+def download = tasks.downloadGameTheoryRelease {
+    src 'https://github.com/kuras120/NeuralNetworks/releases/latest/download/game_theory.zip'
+    dest new File(buildDir, 'game_theory.zip')
+}
+
+tasks.register('embedGameTheoryRelease', Copy)
+def embed = tasks.embedGameTheoryRelease {
+    dependsOn download
+    from zipTree(downloadGameTheoryRelease.dest)
+    into buildDir.toString() + '/resources/main'
+}
+
+tasks.register('createPythonVenv', Exec)
+def venv = tasks.createPythonVenv {
+    workingDir buildDir.toString() + '/resources/main'
+    commandLine 'python3', '-m', 'venv', 'venv'
+}
+
+tasks.register('cleanupZips', Delete)
+def cleanup = tasks.cleanupZips {
+    delete fileTree(buildDir) {
+        include '*.zip'
+    }
+}
+
+jar {
+    dependsOn embed
+    dependsOn venv
+    dependsOn cleanup
+    cleanup.mustRunAfter embed
+}

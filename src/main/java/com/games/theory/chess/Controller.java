@@ -2,7 +2,7 @@ package com.games.theory.chess;
 
 import com.games.theory.chess.model.Chessman;
 import com.games.theory.chess.model.Node;
-import com.games.theory.chess.utils.DataReaderUtils;
+import com.games.theory.utils.DataReaderUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;

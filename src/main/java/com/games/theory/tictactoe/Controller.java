@@ -1,9 +1,10 @@
 package com.games.theory.tictactoe;
 
 import com.games.theory.tictactoe.model.Node;
-import com.games.theory.tictactoe.utils.FifoQueue;
-import com.games.theory.tictactoe.utils.IFifoQueue;
-import com.games.theory.tictactoe.utils.LoggerUtils;
+import com.games.theory.utils.DataReaderUtils;
+import com.games.theory.utils.FifoQueue;
+import com.games.theory.utils.IFifoQueue;
+import com.games.theory.utils.LoggerUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -32,7 +33,6 @@ public class Controller implements Initializable {
     @FXML private CheckBox aiCheckbox;
     @FXML private TextArea winnerField;
 
-    private static final String AI_PATH = "src/main/java/com/games/theory/tictactoe/AI";
     private List<Pair<String, Pair<List<Integer>, Integer>>> observers;
     private Map<String, Integer> points;
     private String[][] aiMap;
@@ -44,10 +44,9 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         try {
             process = Runtime.getRuntime().exec(
-                AI_PATH +
-                "/venv/bin/pip install -r " +
-                AI_PATH +
-                "/requirements.txt"
+                DataReaderUtils.getScript("venv/Scripts/pip.exe").getPath() + " " +
+                "install -r " +
+                DataReaderUtils.getScript("game_theory/requirements.txt").getPath()
             );
             if (!process.waitFor(1, TimeUnit.MINUTES)) {
                 process.destroy();
@@ -56,16 +55,12 @@ public class Controller implements Initializable {
                 LoggerUtils.processLog(process);
                 log.info("AI env installation completed");
             }
-
-        } catch (IOException | InterruptedException ex) {
+        } catch (Exception ex) {
             log.error("AI error {}", ex.getMessage());
         }
         turn = true;
         repeat = false;
-        points = new HashMap<>();
-        points.put("X", 0);
-        points.put("O", 0);
-        aiMap = new String[4][4];
+        setInitialState();
         observers = Arrays.asList(
                 new Pair<>("column", new Pair<>(List.of(1), 1)),
                 new Pair<>("row", new Pair<>(Arrays.asList(1, 2, 3, 4), 4)),
@@ -85,11 +80,11 @@ public class Controller implements Initializable {
         log.info("Initialization completed");
     }
 
-    private String buildArguments() {
+    private String buildArguments(String[][] map) {
         StringBuilder stringBuilder = new StringBuilder();
-        for (var row:aiMap) {
+        for (var row:map) {
             for (var mark:row) {
-                stringBuilder.append(mark).append(' ');
+                stringBuilder.append(Objects.requireNonNullElse(mark, "N")).append(' ');
             }
         }
         stringBuilder.deleteCharAt(stringBuilder.length() - 1);
@@ -105,14 +100,15 @@ public class Controller implements Initializable {
                 log.info("Random move: {}", randInt);
                 try {
                     process = Runtime.getRuntime().exec(
-                        AI_PATH +
-                        "/venv/bin/python " +
-                        AI_PATH +
-                        "/process.py " +
-                        aiMap.length + " " +
-                        buildArguments() + " " +
+                        DataReaderUtils.getScript("venv/Scripts/python.exe").getPath() + " " +
+                        DataReaderUtils.getScript("game_theory/process.py").getPath() + " " +
+                        "O " +
                         points.get("X") + " " +
-                        points.get("O")
+                        points.get("O") + " " +
+                        prevPoints.get("X") + " " +
+                        prevPoints.get("O") + " " +
+                        buildArguments(aiMap) + " " +
+                        buildArguments(prevAiMap)
                     );
                     LoggerUtils.processLog(process);
                 } catch (IOException ex) {
@@ -235,12 +231,18 @@ public class Controller implements Initializable {
                 ((Node) element.getUserData()).setChecked(false);
             }
         }
-        points = new HashMap<>();
-        points.put("X", 0);
-        points.put("O", 0);
-        aiMap = new String[4][4];
+        setInitialState();
         winnerField.setText("");
         table.setDisable(false);
         turn = true;
+    }
+
+    private void setInitialState() {
+        points = new HashMap<>();
+        points.put("X", 0);
+        points.put("O", 0);
+        prevPoints = new HashMap<>(points);
+        aiMap = new String[4][4];
+        prevAiMap = Arrays.stream(aiMap).map(String[]::clone).toArray(String[][]::new);
     }
 }
