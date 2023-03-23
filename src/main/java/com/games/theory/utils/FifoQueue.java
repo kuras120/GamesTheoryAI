@@ -4,18 +4,16 @@ import java.util.LinkedList;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
-
     private final int limit;
-
-    public FifoQueue(int limit) {
-        this.limit = limit;
-    }
+    private final String pattern;
 
     @Override
     public void addFirst(Node node) {
@@ -40,7 +38,7 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
             for (Node element:this) {
                 ((com.games.theory.tictactoe.model.Node) element.getUserData()).setChecked(true);
                 StackPane pane = (StackPane) element;
-                pane.getChildren().add(createLine(pattern, pane));
+                pane.getChildren().add(createLine(pane));
             }
             return ((com.games.theory.tictactoe.model.Node) this.get(0).getUserData()).getMarkName();
         }
@@ -56,12 +54,12 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     public void print() {
         for (var item:this) {
             var node = ((com.games.theory.tictactoe.model.Node)item.getUserData());
-            log.info("{} - {} - {}", node.getColIndex(), node.getRowIndex(), node.getMarkName());
+            log.debug("pattern: {} - col: {} - row: {} - mark: {}", pattern, node.getColIndex(), node.getRowIndex(), node.getMarkName());
         }
-        log.info("\n");
+        log.debug("END\n");
     }
 
-    private Line createLine(String pattern, StackPane pane) {
+    private Line createLine(StackPane pane) {
         switch (pattern) {
             case "column":
                 return new Line(pane.getLayoutX() + pane.getWidth(), pane.getLayoutY(), pane.getLayoutX() +

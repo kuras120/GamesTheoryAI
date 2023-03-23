@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 class FifoQueueTest {
-
   private static final int SIZE = 3;
-  private static final IFifoQueue FIFO_QUEUE = new FifoQueue(SIZE);
+  private static final String PATTERN = "test";
+  private static final IFifoQueue FIFO_QUEUE = new FifoQueue(SIZE, PATTERN);
 
   @AfterEach
   void tearDown() {

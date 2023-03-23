@@ -1,5 +1,6 @@
 package com.games.theory.utils;
 
+import com.games.theory.tictactoe.exception.AiException;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -18,5 +19,9 @@ public class LoggerUtils {
     log.info("Here is the standard output of the command:\n{}", stdInput);
     // Read any errors from the attempted command
     log.debug("Here is the standard error of the command (if any):\n{}", stdError);
+    // TODO Remove after pip update
+//    if (!stdError.isEmpty()) {
+//      throw new AiException("Error output from AI script must be empty");
+//    }
   }
 }
