@@ -34,14 +34,6 @@ public class DiagonalProcessor implements Processor {
   public void process(StackPane node) {
     Node userNode = (Node)node.getUserData();
     int index = userNode.getRowIndex() - userNode.getColIndex();
-    var fifo = fifoQueues.get(.getColIndex());
-    fifo.addFirst(node);
-    if (fifo.isFull()) {
-      String won = fifo.isAllEqual(PATTERN);
-      if (won != null) {
-        points.put(won, points.get(won) + 1);
-      }
-    }
   }
 
   @Override

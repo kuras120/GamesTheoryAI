@@ -47,11 +47,12 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         random = new Random();
         try {
-            process = Runtime.getRuntime().exec(
-                DataReaderUtils.getScript("venv/Scripts/pip.exe").getPath() + " " +
-                "install -r " +
+            process = new ProcessBuilder(List.of(
+                DataReaderUtils.getScript("venv/Scripts/pip.exe").getPath(),
+                "install",
+                "-r",
                 DataReaderUtils.getScript("game_theory/requirements.txt").getPath()
-            );
+            )).start();
             if (!process.waitFor(1, TimeUnit.MINUTES)) {
                 process.destroy();
                 throw new TimeoutException("Time exceeded for AI env installation process");
@@ -102,14 +103,14 @@ public class Controller implements Initializable {
                 int randInt = random.nextInt(16) + 1;
                 log.info("Random move: {}", randInt);
                 try {
-                    process = Runtime.getRuntime().exec(
-                        DataReaderUtils.getScript("venv/Scripts/python.exe").getPath() + " " +
-                        DataReaderUtils.getScript("game_theory/process.py").getPath() + " " +
-                        "O " +
-                        points.get("X") + " " +
-                        points.get("O") + " " +
+                    process = new ProcessBuilder(List.of(
+                        DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
+                        DataReaderUtils.getScript("game_theory/process.py").getPath(),
+                        "O",
+                        points.get("X").toString(),
+                        points.get("O").toString(),
                         buildArguments(aiMap)
-                    );
+                    )).start();
                     LoggerUtils.processLog(process);
                 } catch (Exception ex) {
                     log.error("AI error {}", ex.getMessage());
