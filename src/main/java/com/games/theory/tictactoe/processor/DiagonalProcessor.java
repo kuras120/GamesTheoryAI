@@ -15,16 +15,13 @@ import java.util.stream.IntStream;
 public class DiagonalProcessor implements Processor {
   private static final String PATTERN_LEFT = "diagonal-to-left";
   private static final String PATTERN_RIGHT = "diagonal-to-right";
-  private final Map<Integer, IFifoQueue> fifoQueuesLeft;
-  private final Map<Integer, IFifoQueue> fifoQueuesRight;
+  private IFifoQueue mainDiagonalQueue;
+  private IFifoQueue antiDiagonalQueue;
+  private Map<Integer, IFifoQueue> lesserDiagonalQueues;
   @Getter
   private final Map<String, Integer> points;
 
   public DiagonalProcessor(int columns, int fifoSize) {
-    fifoQueuesLeft = IntStream.rangeClosed(-columns + 2, columns - 2).boxed()
-        .collect(Collectors.toMap(Function.identity(), n -> new FifoQueue(fifoSize, PATTERN_LEFT)));
-    fifoQueuesRight = IntStream.rangeClosed(-columns + 2, columns - 2).boxed()
-        .collect(Collectors.toMap(Function.identity(), n -> new FifoQueue(fifoSize, PATTERN_RIGHT)));
     points = new HashMap<>();
     points.put("X", 0);
     points.put("O", 0);
@@ -38,8 +35,6 @@ public class DiagonalProcessor implements Processor {
 
   @Override
   public void reset() {
-    fifoQueuesLeft.values().forEach(IFifoQueue::clear);
-    fifoQueuesRight.values().forEach(IFifoQueue::clear);
     points.put("X", 0);
     points.put("O", 0);
   }

@@ -20,7 +20,7 @@ public class ColumnProcessor implements Processor {
 
   public ColumnProcessor(int columns, int fifoSize) {
     fifoQueues = IntStream.rangeClosed(0, columns).boxed()
-        .collect(Collectors.toMap(Function.identity(), n -> new FifoQueue(fifoSize, PATTERN)));
+        .collect(Collectors.toMap(Function.identity(), n -> new FifoQueue(fifoSize)));
     points = new HashMap<>();
     points.put("X", 0);
     points.put("O", 0);
@@ -31,7 +31,7 @@ public class ColumnProcessor implements Processor {
     var fifo = fifoQueues.get(((Node)node.getUserData()).getColIndex());
     fifo.addFirst(node);
     if (fifo.isFull()) {
-      String won = fifo.isAllEqual(PATTERN);
+      String won = fifo.isAllEqual();
       if (won != null) {
         points.put(won, points.get(won) + 1);
       }
