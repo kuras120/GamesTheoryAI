@@ -1,8 +1,8 @@
 package com.games.theory.tictactoe.processor;
 
 import com.games.theory.tictactoe.model.Node;
-import com.games.theory.utils.FifoQueue;
-import com.games.theory.utils.IFifoQueue;
+import com.games.theory.tictactoe.storage.FifoQueue;
+import com.games.theory.tictactoe.storage.IFifoQueue;
 import javafx.scene.layout.StackPane;
 import lombok.Getter;
 

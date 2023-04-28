@@ -1,16 +1,12 @@
 package com.games.theory.tictactoe.processor;
 
 import com.games.theory.tictactoe.model.Node;
-import com.games.theory.utils.FifoQueue;
-import com.games.theory.utils.IFifoQueue;
+import com.games.theory.tictactoe.storage.IFifoQueue;
 import javafx.scene.layout.StackPane;
 import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class DiagonalProcessor implements Processor {
   private static final String PATTERN_LEFT = "diagonal-to-left";

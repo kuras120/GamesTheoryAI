@@ -30,7 +30,6 @@ import java.util.concurrent.TimeoutException;
 
 @Slf4j
 public class Controller implements Initializable {
-
     @FXML private GridPane table;
     @FXML private CheckBox aiCheckbox;
     @FXML private TextArea winnerField;
@@ -116,8 +115,9 @@ public class Controller implements Initializable {
                     log.error("AI error {}", ex.getMessage());
                 }
                 table.getChildren().get(randInt).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0,
-                        0, MouseButton.PRIMARY, 1, true, true, true, true, true, true,
-                        true, true, true, true, null));
+                        0, MouseButton.PRIMARY, 1, true, true, true,
+                    true, true, true, true, true,
+                    true, true, null));
             } while (repeat);
         }
     }

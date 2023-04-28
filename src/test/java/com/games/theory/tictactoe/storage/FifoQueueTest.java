@@ -1,11 +1,8 @@
-package com.games.theory.tictactoe.utils;
+package com.games.theory.tictactoe.storage;
 
-import com.games.theory.utils.FifoQueue;
-import com.games.theory.utils.IFifoQueue;
 import javafx.scene.layout.StackPane;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import com.games.theory.tictactoe.model.Node;
 

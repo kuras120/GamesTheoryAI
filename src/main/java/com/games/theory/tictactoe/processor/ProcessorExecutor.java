@@ -24,8 +24,8 @@ public class ProcessorExecutor {
 
   public ProcessorExecutor execute(List<Node> tableList) {
     for (Node node : tableList) {
-      if (node instanceof StackPane) {
-        processors.forEach(processor -> processor.process((StackPane) node));
+      if (node instanceof StackPane stackPane) {
+        processors.forEach(processor -> processor.process(stackPane));
       }
     }
     return this;
