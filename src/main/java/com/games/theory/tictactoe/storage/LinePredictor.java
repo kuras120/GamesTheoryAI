@@ -27,12 +27,12 @@ public class LinePredictor {
 
   public static String predictPattern(Node node1, Node node2) {
     if (node1 == null || node2 == null) return StringUtils.EMPTY;
-    int rowDifference = node2.getRowIndex() - node1.getRowIndex();
     int columnDifference = node2.getColIndex() - node1.getColIndex();
-    String difference = String.valueOf(rowDifference) + columnDifference;
+    int rowDifference = node2.getRowIndex() - node1.getRowIndex();
+    String difference = String.valueOf(columnDifference) + rowDifference;
     return switch (difference) {
-      case "10" -> "column";
-      case "01" -> "row";
+      case "01" -> "column";
+      case "10" -> "row";
       case "11" -> "diagonal-to-right";
       case "-11" -> "diagonal-to-left";
       default -> throw new IllegalStateException("Unexpected value: " + difference);
