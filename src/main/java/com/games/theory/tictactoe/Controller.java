@@ -4,6 +4,7 @@ import com.games.theory.tictactoe.exception.AiException;
 import com.games.theory.tictactoe.exception.GameException;
 import com.games.theory.tictactoe.model.Node;
 import com.games.theory.tictactoe.processor.ColumnProcessor;
+import com.games.theory.tictactoe.processor.DiagonalProcessor;
 import com.games.theory.tictactoe.processor.ProcessorExecutor;
 import com.games.theory.tictactoe.processor.RowProcessor;
 import com.games.theory.utils.DataReaderUtils;
@@ -67,16 +68,17 @@ public class Controller implements Initializable {
         repeat = false;
         setInitialState();
 
-        int numRows = table.getRowCount();
-        int numCols = table.getColumnCount();
-        if (numRows != numCols) throw new GameException("Number of columns and rows must be equal");
+        if (table.getColumnCount() != table.getRowCount())
+            throw new GameException("Number of columns and rows must be equal");
 
+        int size = table.getColumnCount();
         processorExecutor = new ProcessorExecutor()
             .add(new RowProcessor(3))
-            .add(new ColumnProcessor(numCols, 3));
+            .add(new ColumnProcessor(size, 3))
+            .add(new DiagonalProcessor(size, 3));
 
-        for (int i = 0 ; i < numRows ; i++) {
-            for (int j = 0; j < numCols; j++) {
+        for (int i = 0 ; i < size ; i++) {
+            for (int j = 0; j < size; j++) {
                 addPane(i, j);
             }
         }

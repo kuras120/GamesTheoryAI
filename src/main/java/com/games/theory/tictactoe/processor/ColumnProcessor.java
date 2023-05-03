@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ColumnProcessor implements Processor {
-  private static final String PATTERN = "column";
   private final Map<Integer, IFifoQueue> fifoQueues;
   @Getter
   private final Map<String, Integer> points;
