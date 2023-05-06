@@ -28,6 +28,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.stream.Stream;
 
 @Slf4j
 public class Controller implements Initializable {
@@ -47,18 +48,19 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         random = new Random();
         try {
+            // TODO skip for tests
             process = new ProcessBuilder(List.of(
                 DataReaderUtils.getScript("venv/Scripts/pip.exe").getPath(),
                 "install",
                 "-r",
                 DataReaderUtils.getScript("game_theory/requirements.txt").getPath()
             )).start();
-            if (!process.waitFor(1, TimeUnit.MINUTES)) {
-                process.destroy();
-                throw new TimeoutException("Time exceeded for AI env installation process");
-            } else {
+            if (process.waitFor(1, TimeUnit.MINUTES)) {
                 LoggerUtils.processLog(process);
                 log.info("AI env installation completed");
+            } else {
+                process.destroy();
+                throw new TimeoutException("Time exceeded for AI env installation process");
             }
         } catch (Exception ex) {
             log.error("AI error {}", ex.getMessage());
@@ -85,18 +87,6 @@ public class Controller implements Initializable {
         log.info("Initialization completed");
     }
 
-    private String buildArguments(String[][] map) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (var row:map) {
-            log.debug(Arrays.toString(row));
-            for (var mark:row) {
-                stringBuilder.append(Objects.requireNonNullElse(mark, "N")).append(' ');
-            }
-        }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        return stringBuilder.toString();
-    }
-
     private void changeTurn() {
         turn = !turn;
         if (!turn && aiCheckbox.isSelected()) {
@@ -104,14 +94,24 @@ public class Controller implements Initializable {
                 int randInt = random.nextInt(16) + 1;
                 log.info("Random move: {}", randInt);
                 try {
-                    process = new ProcessBuilder(List.of(
-                        DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
-                        DataReaderUtils.getScript("game_theory/process.py").getPath(),
-                        "O",
-                        points.get("X").toString(),
-                        points.get("O").toString(),
-                        buildArguments(aiMap)
-                    )).start();
+                    log.debug(Stream.concat(
+                        Stream.of(
+                            DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
+                            DataReaderUtils.getScript("game_theory/process.py").getPath(),
+                            points.get("X").toString(),
+                            points.get("O").toString()
+                        ),
+                        Arrays.stream(aiMap).flatMap(Arrays::stream)
+                    ).toList().toString());
+                    process = new ProcessBuilder(Stream.concat(
+                        Stream.of(
+                            DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
+                            DataReaderUtils.getScript("game_theory/process.py").getPath(),
+                            points.get("X").toString(),
+                            points.get("O").toString()
+                        ),
+                        Arrays.stream(aiMap).flatMap(Arrays::stream).map(mark -> mark == null ? "N" : mark)
+                    ).toList()).start();
                     LoggerUtils.processLog(process);
                 } catch (Exception ex) {
                     log.error("AI error {}", ex.getMessage());

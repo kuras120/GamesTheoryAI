@@ -51,7 +51,8 @@ public class FifoQueue extends LinkedList<Node> implements IFifoQueue {
     }
 
     @Override
-    public void print() {
+    public void print(String text) {
+        log.debug("{}", text);
         this.forEach(element -> {
             var node = getUserNode(element.getUserData());
             log.debug("col: {} - row: {} - mark: {}", node.getColIndex(), node.getRowIndex(), node.getMarkName());

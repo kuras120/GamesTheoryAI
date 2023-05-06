@@ -7,5 +7,5 @@ public interface IFifoQueue {
     String isAllEqual();
     void clear();
     boolean isFull();
-    void print();
+    void print(String text);
 }

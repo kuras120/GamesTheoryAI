@@ -46,9 +46,9 @@ public class DiagonalProcessor implements Processor {
       lesserDiagonalQueues.computeIfAbsent(diff, k -> new FifoQueue(fifoSize));
       lesserDiagonalQueues.get(diff).addFirst(node);
     }
-    mainDiagonalQueue.print();
-    antiDiagonalQueue.print();
-    lesserDiagonalQueues.forEach((k, v) -> v.print());
+//    mainDiagonalQueue.print("MainDiagonal");
+//    antiDiagonalQueue.print("AntiDiagonal");
+//    lesserDiagonalQueues.forEach((k, v) -> v.print("LesserDiagonal-" + k));
   }
 
   @Override
