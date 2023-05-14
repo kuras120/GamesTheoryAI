@@ -131,63 +131,6 @@ public class Controller implements Initializable {
             "Player X has " + points.get("X") +
             " points\nPlayer O has " + points.get("O") + " points"
         );
-
-//        for (var i:iterator.getKey()) {
-//            for (var j = i; j < tableList.size(); j += iterator.getValue()) {
-//                if (tableList.get(j) instanceof StackPane) {
-//                    Node node = ((Node)tableList.get(j).getUserData());
-//                    switch (pattern) {
-//                        case "row":
-//                            if (!((Integer) node.getRowIndex()).equals(row)) nodeQue.clear();
-//                            nodeQue.addFirst(tableList.get(j));
-//                            break;
-//                        case "column":
-//                            if (!((Integer) node.getColIndex()).equals(column)) nodeQue.clear();
-//                            nodeQue.addFirst(tableList.get(j));
-//                            break;
-//                        case "diagonal-to-right":
-//                            if (!i.equals(prevLoop)) {
-//                                nodeQue.clear();
-//                                prevLoop = i;
-//                            }
-//                            if ((node.getColIndex() == 3 && node.getRowIndex() == 0) ||
-//                                (node.getColIndex() == 2 && node.getRowIndex() == 0) ||
-//                                (node.getColIndex() == 3 && node.getRowIndex() == 1)) {
-//                                nodeQue.clear();
-//                            }
-//                            nodeQue.addFirst(tableList.get(j));
-//                            break;
-//                        case "diagonal-to-left":
-//                            if (!i.equals(prevLoop)) {
-//                                nodeQue.clear();
-//                                prevLoop = i;
-//                            }
-//                            if ((node.getColIndex() == 3 && node.getRowIndex() == 2) ||
-//                                (node.getColIndex() == 2 && node.getRowIndex() == 3) ||
-//                                (node.getColIndex() == 3 && node.getRowIndex() == 3)) {
-//                                nodeQue.clear();
-//                            }
-//                            nodeQue.addFirst(tableList.get(j));
-//                            break;
-//                        default:
-//                            break;
-//                    }
-//                    if (nodeQue.isFull()) {
-//                        won = nodeQue.isAllEqual(pattern);
-//                        if (won != null) {
-//                            roundPoints.put(won, roundPoints.get(won) + 1);
-//                            points.put(won, points.get(won) + 1);
-//                            winnerField.setText(
-//                                    "Player X has " + points.get("X") +
-//                                    " points\nPlayer O has " + points.get("O") + " points"
-//                            );
-//                        }
-//                    }
-//                    column = node.getColIndex();
-//                    row = node.getRowIndex();
-//                }
-//            }
-//        }
     }
 
     private void addPane(int rowIndex, int colIndex) {
