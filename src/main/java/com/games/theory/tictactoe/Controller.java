@@ -77,7 +77,7 @@ public class Controller implements Initializable {
         processorExecutor = new ProcessorExecutor()
             .add(new RowProcessor(3))
             .add(new ColumnProcessor(size, 3))
-            .add(new DiagonalProcessor(size, 3));
+            .add(new DiagonalProcessor(3));
 
         for (int i = 0 ; i < size ; i++) {
             for (int j = 0; j < size; j++) {
