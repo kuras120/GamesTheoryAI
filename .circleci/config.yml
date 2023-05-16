@@ -21,6 +21,9 @@ jobs:
           name: "Check gradle version"
           command: ./gradlew --version
       - run:
+          name: "Install python"
+          command: sudo apt update && sudo apt install python3-venv
+      - run:
           name: "Build application"
           command: ./gradlew clean build
       - run:
