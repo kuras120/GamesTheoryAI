@@ -30,3 +30,7 @@ jar {
     dependsOn cleanup
     cleanup.mustRunAfter embed
 }
+
+shadowJar {
+    dependsOn jar
+}

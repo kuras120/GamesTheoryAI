@@ -1,9 +1,13 @@
 package com.games.theory.tictactoe;
 
+import com.games.theory.tictactoe.exception.AiException;
+import com.games.theory.tictactoe.exception.GameException;
 import com.games.theory.tictactoe.model.Node;
+import com.games.theory.tictactoe.processor.ColumnProcessor;
+import com.games.theory.tictactoe.processor.DiagonalProcessor;
+import com.games.theory.tictactoe.processor.ProcessorExecutor;
+import com.games.theory.tictactoe.processor.RowProcessor;
 import com.games.theory.utils.DataReaderUtils;
-import com.games.theory.utils.FifoQueue;
-import com.games.theory.utils.IFifoQueue;
 import com.games.theory.utils.LoggerUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -18,179 +22,118 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.stream.Stream;
 
 @Slf4j
 public class Controller implements Initializable {
-
     @FXML private GridPane table;
     @FXML private CheckBox aiCheckbox;
     @FXML private TextArea winnerField;
 
-    private List<Pair<String, Pair<List<Integer>, Integer>>> observers;
+    private ProcessorExecutor processorExecutor;
     private Map<String, Integer> points;
     private String[][] aiMap;
     private boolean turn;
     private boolean repeat;
     private Process process;
+    private Random random;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        random = new Random();
         try {
-            process = Runtime.getRuntime().exec(
-                DataReaderUtils.getScript("venv/Scripts/pip.exe").getPath() + " " +
-                "install -r " +
+            // TODO skip for tests
+            process = new ProcessBuilder(List.of(
+                DataReaderUtils.getScript("venv/Scripts/pip.exe").getPath(),
+                "install",
+                "-r",
                 DataReaderUtils.getScript("game_theory/requirements.txt").getPath()
-            );
-            if (!process.waitFor(1, TimeUnit.MINUTES)) {
-                process.destroy();
-                throw new InterruptedException("Time exceeded for AI env installation process");
-            } else {
+            )).start();
+            if (process.waitFor(1, TimeUnit.MINUTES)) {
                 LoggerUtils.processLog(process);
                 log.info("AI env installation completed");
+            } else {
+                process.destroy();
+                throw new TimeoutException("Time exceeded for AI env installation process");
             }
         } catch (Exception ex) {
             log.error("AI error {}", ex.getMessage());
+            throw new AiException("AI error", ex);
         }
         turn = true;
         repeat = false;
         setInitialState();
-        observers = Arrays.asList(
-                new Pair<>("column", new Pair<>(List.of(1), 1)),
-                new Pair<>("row", new Pair<>(Arrays.asList(1, 2, 3, 4), 4)),
-                new Pair<>("diagonal-to-right", new Pair<>(Arrays.asList(1, 2, 5), 5)),
-                new Pair<>("diagonal-to-left", new Pair<>(Arrays.asList(3, 4, 8), 3))
-        );
-        if (table != null) {
-            int numRows = table.getRowCount();
-            int numCols = table.getColumnCount();
 
-            for (int i = 0 ; i < numCols ; i++) {
-                for (int j = 0; j < numRows; j++) {
-                    addPane(i, j);
-                }
+        if (table.getColumnCount() != table.getRowCount())
+            throw new GameException("Number of columns and rows must be equal");
+
+        int size = table.getColumnCount();
+        processorExecutor = new ProcessorExecutor()
+            .add(new RowProcessor(3))
+            .add(new ColumnProcessor(size, 3))
+            .add(new DiagonalProcessor(3));
+
+        for (int i = 0 ; i < size ; i++) {
+            for (int j = 0; j < size; j++) {
+                addPane(i, j);
             }
         }
         log.info("Initialization completed");
     }
 
-    private String buildArguments(String[][] map) {
-        StringBuilder stringBuilder = new StringBuilder();
-        for (var row:map) {
-            for (var mark:row) {
-                stringBuilder.append(Objects.requireNonNullElse(mark, "N")).append(' ');
-            }
-        }
-        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-        return stringBuilder.toString();
-    }
-
     private void changeTurn() {
         turn = !turn;
         if (!turn && aiCheckbox.isSelected()) {
-            Random random = new Random();
             do {
                 int randInt = random.nextInt(16) + 1;
                 log.info("Random move: {}", randInt);
                 try {
-                    process = Runtime.getRuntime().exec(
-                        DataReaderUtils.getScript("venv/Scripts/python.exe").getPath() + " " +
-                        DataReaderUtils.getScript("game_theory/process.py").getPath() + " " +
-                        "O " +
-                        points.get("X") + " " +
-                        points.get("O") + " " +
-                        prevPoints.get("X") + " " +
-                        prevPoints.get("O") + " " +
-                        buildArguments(aiMap) + " " +
-                        buildArguments(prevAiMap)
-                    );
+                    log.debug(Stream.concat(
+                        Stream.of(
+                            DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
+                            DataReaderUtils.getScript("game_theory/process.py").getPath(),
+                            points.get("X").toString(),
+                            points.get("O").toString()
+                        ),
+                        Arrays.stream(aiMap).flatMap(Arrays::stream)
+                    ).toList().toString());
+                    process = new ProcessBuilder(Stream.concat(
+                        Stream.of(
+                            DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
+                            DataReaderUtils.getScript("game_theory/process.py").getPath(),
+                            points.get("X").toString(),
+                            points.get("O").toString()
+                        ),
+                        Arrays.stream(aiMap).flatMap(Arrays::stream).map(mark -> mark == null ? "N" : mark)
+                    ).toList()).start();
                     LoggerUtils.processLog(process);
-                } catch (IOException ex) {
+                } catch (Exception ex) {
                     log.error("AI error {}", ex.getMessage());
                 }
                 table.getChildren().get(randInt).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0,
-                        0, MouseButton.PRIMARY, 1, true, true, true, true, true, true,
-                        true, true, true, true, null));
+                        0, MouseButton.PRIMARY, 1, true, true, true,
+                    true, true, true, true, true,
+                    true, true, null));
             } while (repeat);
         }
     }
 
-    private Map<String, Integer> observe(String pattern, Pair<List<Integer>, Integer> iterator) {
-        IFifoQueue nodeQue = new FifoQueue(3);
+    private void observe() {
         var tableList = new ArrayList<>(table.getChildren());
-        Integer column = null;
-        Integer row = null;
-        Integer prevLoop = null;
-        String won;
-        Map<String, Integer> roundPoints = new HashMap<>();
-        roundPoints.put("X", 0);
-        roundPoints.put("O", 0);
-        for (var i:iterator.getKey()) {
-            for (var j = i; j < tableList.size(); j += iterator.getValue()) {
-                if (tableList.get(j) instanceof StackPane) {
-                    Node node = ((Node)tableList.get(j).getUserData());
-                    switch (pattern) {
-                        case "row":
-                            if (!((Integer) node.getRowIndex()).equals(row)) nodeQue.clear();
-                            nodeQue.addFirst(tableList.get(j));
-                            break;
-                        case "column":
-                            if (!((Integer) node.getColIndex()).equals(column)) nodeQue.clear();
-                            nodeQue.addFirst(tableList.get(j));
-                            break;
-                        case "diagonal-to-right":
-                            if (!i.equals(prevLoop)) {
-                                nodeQue.clear();
-                                prevLoop = i;
-                            }
-                            if ((node.getColIndex() == 3 && node.getRowIndex() == 0) ||
-                                (node.getColIndex() == 2 && node.getRowIndex() == 0) ||
-                                (node.getColIndex() == 3 && node.getRowIndex() == 1)) {
-                                nodeQue.clear();
-                            }
-                            nodeQue.addFirst(tableList.get(j));
-                            break;
-                        case "diagonal-to-left":
-                            if (!i.equals(prevLoop)) {
-                                nodeQue.clear();
-                                prevLoop = i;
-                            }
-                            if ((node.getColIndex() == 3 && node.getRowIndex() == 2) ||
-                                (node.getColIndex() == 2 && node.getRowIndex() == 3) ||
-                                (node.getColIndex() == 3 && node.getRowIndex() == 3)) {
-                                nodeQue.clear();
-                            }
-                            nodeQue.addFirst(tableList.get(j));
-                            break;
-                        default:
-                            break;
-                    }
-                    if (nodeQue.isFull()) {
-                        won = nodeQue.isAllEqual(pattern);
-                        if (won != null) {
-                            roundPoints.put(won, roundPoints.get(won) + 1);
-                            points.put(won, points.get(won) + 1);
-                            winnerField.setText(
-                                    "Player X has " + points.get("X") +
-                                    " points\nPlayer O has " + points.get("O") + " points"
-                            );
-                        }
-                    }
-                    column = node.getColIndex();
-                    row = node.getRowIndex();
-                }
-            }
-        }
-        return roundPoints;
+        processorExecutor.execute(tableList).collect().forEach((k, v) -> points.merge(k, v, Integer::sum));
+        winnerField.setText(
+            "Player X has " + points.get("X") +
+            " points\nPlayer O has " + points.get("O") + " points"
+        );
     }
 
-    private void addPane(int colIndex, int rowIndex) {
+    private void addPane(int rowIndex, int colIndex) {
         Pane pane = new StackPane();
         pane.setUserData(new Node(colIndex, rowIndex));
         pane.setOnMouseClicked(e -> {
@@ -205,7 +148,7 @@ public class Controller implements Initializable {
                 text.setText(mark);
                 node.setMarkName(mark);
                 pane.getChildren().add(text);
-                checkWinner();
+                observe();
                 changeTurn();
                 repeat = false;
             }
@@ -214,12 +157,6 @@ public class Controller implements Initializable {
             }
         });
         table.add(pane, colIndex, rowIndex);
-    }
-
-    private void checkWinner() {
-        for (var pair:observers) {
-            observe(pair.getKey(), pair.getValue());
-        }
     }
 
     @FXML
@@ -241,8 +178,6 @@ public class Controller implements Initializable {
         points = new HashMap<>();
         points.put("X", 0);
         points.put("O", 0);
-        prevPoints = new HashMap<>(points);
         aiMap = new String[4][4];
-        prevAiMap = Arrays.stream(aiMap).map(String[]::clone).toArray(String[][]::new);
     }
 }

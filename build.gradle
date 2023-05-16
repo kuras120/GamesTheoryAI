@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation "com.jfoenix:jfoenix:$JFOENIX_VERSION"
+    implementation "io.github.palexdev:materialfx:$MATERIALFX_VERSION"
     implementation "com.google.guava:guava:$GUAVA_VERSION"
     implementation "commons-io:commons-io:$COMMONS_IO_VERSION"
     implementation "ch.qos.logback:logback-classic:$LOGBACK_VERSION"
@@ -27,13 +27,21 @@ compileJava {
     targetCompatibility = "$JAVA_VERSION"
 }
 
+apply from: 'libs.gradle'
+
+compileTestJava {
+    dependsOn embedGameTheoryRelease
+    sourceCompatibility = "$JAVA_VERSION"
+    targetCompatibility = "$JAVA_VERSION"
+}
+
 test {
     useJUnitPlatform()
     finalizedBy jacocoTestReport
 }
 
 application {
-    mainClassName = 'com.games.theory.GUI'
+    mainClass = 'com.games.theory.GUI'
 }
 
 javafx {
@@ -52,5 +60,3 @@ jacocoTestReport {
         csv.required = false
     }
 }
-
-apply from: 'libs.gradle'
