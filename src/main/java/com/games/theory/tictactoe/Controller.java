@@ -94,16 +94,7 @@ public class Controller implements Initializable {
                 int randInt = random.nextInt(16) + 1;
                 log.info("Random move: {}", randInt);
                 try {
-                    log.debug(Stream.concat(
-                        Stream.of(
-                            DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
-                            DataReaderUtils.getScript("game_theory/process.py").getPath(),
-                            points.get("X").toString(),
-                            points.get("O").toString()
-                        ),
-                        Arrays.stream(aiMap).flatMap(Arrays::stream)
-                    ).toList().toString());
-                    process = new ProcessBuilder(Stream.concat(
+                    List<String> command = Stream.concat(
                         Stream.of(
                             DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
                             DataReaderUtils.getScript("game_theory/process.py").getPath(),
@@ -111,7 +102,9 @@ public class Controller implements Initializable {
                             points.get("O").toString()
                         ),
                         Arrays.stream(aiMap).flatMap(Arrays::stream).map(mark -> mark == null ? "N" : mark)
-                    ).toList()).start();
+                    ).toList();
+                    log.debug(command.toString());
+                    process = new ProcessBuilder(command).start();
                     LoggerUtils.processLog(process);
                 } catch (Exception ex) {
                     log.error("AI error {}", ex.getMessage());

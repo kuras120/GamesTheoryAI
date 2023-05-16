@@ -1,7 +1,7 @@
 tasks.register('downloadGameTheoryRelease', Download)
 def download = tasks.downloadGameTheoryRelease {
-    src 'https://github.com/kuras120/NeuralNetworks/releases/latest/download/game_theory.zip'
-    dest new File(buildDir, 'game_theory.zip')
+    src 'https://github.com/kuras120/NeuralNetworks/releases/latest/download/games_theory.zip'
+    dest new File(buildDir, 'games_theory.zip')
 }
 
 tasks.register('embedGameTheoryRelease', Copy)
