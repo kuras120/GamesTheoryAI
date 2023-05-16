@@ -1,20 +1,18 @@
 package com.games.theory.tictactoe.storage;
 
 import javafx.scene.layout.StackPane;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import com.games.theory.tictactoe.model.Node;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@Slf4j
 class FifoQueueTest {
   private static final int SIZE = 3;
   private static final IFifoQueue FIFO_QUEUE = new FifoQueue(SIZE);
 
   @AfterEach
-  void tearDown() {
+  void afterEach() {
     FIFO_QUEUE.clear();
   }
 

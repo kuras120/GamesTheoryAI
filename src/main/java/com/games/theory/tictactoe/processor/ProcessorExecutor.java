@@ -2,14 +2,12 @@ package com.games.theory.tictactoe.processor;
 
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class ProcessorExecutor {
   private final List<Processor> processors;
 

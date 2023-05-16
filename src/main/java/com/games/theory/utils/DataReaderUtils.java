@@ -8,6 +8,7 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -19,10 +20,9 @@ public class DataReaderUtils {
 
     public static Map<String, String> readModel(String model) {
         try {
-            String text = Resources.toString(Resources.getResource(model), StandardCharsets.UTF_8);
+            List<String> text = Resources.readLines(Resources.getResource(model), StandardCharsets.UTF_8);
             Map<String, String> map = new HashMap<>();
-            String[] lines = text.split("\n");
-            for (var line : lines) {
+            for (var line : text) {
                 var keyValue = line.split(":");
                 map.put(keyValue[0], keyValue[1]);
             }

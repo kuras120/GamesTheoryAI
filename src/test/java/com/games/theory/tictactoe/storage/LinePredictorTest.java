@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class LinePredictorTest {
-
   @ParameterizedTest
   @MethodSource("cases")
   void predictPattern(List<Integer> cols, List<Integer> rows, String predictedPattern) {
