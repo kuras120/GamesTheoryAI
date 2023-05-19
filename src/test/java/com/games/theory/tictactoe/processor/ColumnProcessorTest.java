@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ColumnProcessorTest {
-    private final ColumnProcessor columnProcessor = new ColumnProcessor(4, 3);
+    private final ColumnProcessor columnProcessor = new ColumnProcessor(3);
 
     @AfterEach
     void afterEach() {

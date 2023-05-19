@@ -58,6 +58,6 @@
         <CheckBox fx:id="aiCheckbox" maxHeight="Infinity" mnemonicParsing="false" selected="true" text="AI"
                   GridPane.halignment="CENTER"/>
     </GridPane>
-    <TextArea fx:id="winnerField" disable="true" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="1"
+    <TextArea fx:id="pointsField" disable="true" maxHeight="Infinity" maxWidth="Infinity" GridPane.columnIndex="1"
                GridPane.rowIndex="1"/>
 </GridPane>

@@ -8,26 +8,25 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class ColumnProcessor implements Processor {
   private final Map<Integer, IFifoQueue> fifoQueues;
   @Getter
   private final Map<String, Integer> points;
 
-  public ColumnProcessor(int columns, int fifoSize) {
-    fifoQueues = IntStream.rangeClosed(0, columns).boxed()
-        .collect(Collectors.toMap(Function.identity(), n -> new FifoQueue(fifoSize)));
+  private final int fifoSize;
+
+  public ColumnProcessor(int fifoSize) {
+    fifoQueues = new HashMap<>();
     points = new HashMap<>();
     points.put("X", 0);
     points.put("O", 0);
+    this.fifoSize = fifoSize;
   }
 
   @Override
   public void process(StackPane node) {
-    var fifo = fifoQueues.get(((Node)node.getUserData()).getColIndex());
+    var fifo = fifoQueues.computeIfAbsent(((Node)node.getUserData()).getColIndex(), k -> new FifoQueue(fifoSize));
     fifo.addFirst(node);
     if (fifo.isFull()) {
       String won = fifo.isAllEqual();

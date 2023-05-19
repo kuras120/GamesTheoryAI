@@ -24,7 +24,7 @@ class ProcessorExecutorTest {
     void executeAndCollect(List<Node> nodes, Map<String, Integer> expectedPoints) {
         Map<String, Integer> actualPoints = processorExecutor
                 .add(new RowProcessor(3))
-                .add(new ColumnProcessor(3, 3))
+                .add(new ColumnProcessor(3))
                 .add(new DiagonalProcessor(3))
                 .execute(nodes)
                 .collect();
