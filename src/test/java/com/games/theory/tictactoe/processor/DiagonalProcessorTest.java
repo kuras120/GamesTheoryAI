@@ -23,9 +23,9 @@ class DiagonalProcessorTest {
 
     @ParameterizedTest
     @MethodSource("cases")
-    void basicTest(List<StackPane> nodeList, Map<String, Integer> expectedPoints) {
+    void basicTest(List<StackPane> nodeList, Map<String, Integer> expectedPoints, String match) {
         nodeList.forEach(diagonalProcessor::process);
-        assertEquals(diagonalProcessor.getPoints(), expectedPoints);
+        assertEquals(diagonalProcessor.getPoints(), expectedPoints, "Expect " + match + " for current map");
     }
 
     private static Stream<Arguments> cases() {
@@ -36,7 +36,8 @@ class DiagonalProcessorTest {
                     createNode(1, 1, "X"),
                     createNode(2, 2, "X")
                 ),
-                Map.of("X", 1, "O", 0)
+                Map.of("X", 1, "O", 0),
+                "match"
             ),
             Arguments.of(
                 List.of(
@@ -44,7 +45,8 @@ class DiagonalProcessorTest {
                     createNode(1, 0, "X"),
                     createNode(0, 2, "X")
                 ),
-                Map.of("X", 0, "O", 0)
+                Map.of("X", 0, "O", 0),
+                "no match"
             )
         );
     }

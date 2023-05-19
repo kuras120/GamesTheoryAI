@@ -37,7 +37,7 @@ public class PythonExecutor {
         }
     }
 
-    public void processState(String pointsX, String pointsO, String[][] aiMap) {
+    public void processState(String pointsX, String pointsO, String... aiMap) {
         try {
             List<String> command = Stream.concat(
                 Stream.of(
@@ -46,7 +46,7 @@ public class PythonExecutor {
                     pointsX,
                     pointsO
                 ),
-                Arrays.stream(aiMap).flatMap(Arrays::stream).map(mark -> mark == null ? "N" : mark)
+                Arrays.stream(aiMap).map(mark -> mark == null ? "N" : mark)
             ).toList();
             log.debug(command.toString());
             process = new ProcessBuilder(command).start();

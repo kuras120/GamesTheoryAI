@@ -21,20 +21,20 @@ class ProcessorExecutorTest {
 
     @ParameterizedTest
     @MethodSource("cases")
-    void executeAndCollect(List<Node> nodes, Map<String, Integer> expectedPoints) {
+    void executeAndCollect(List<Node> nodes, Map<String, Integer> expectedPoints, String points) {
         Map<String, Integer> actualPoints = processorExecutor
                 .add(new RowProcessor(3))
                 .add(new ColumnProcessor(3))
                 .add(new DiagonalProcessor(3))
                 .execute(nodes)
                 .collect();
-        assertEquals(expectedPoints, actualPoints);
+        assertEquals(expectedPoints, actualPoints, "Expect " + points + " for current map");
     }
 
     private static Stream<Arguments> cases() throws IOException {
         return Stream.of(
-                Arguments.of(readMap("map1"), Map.of("X", 4, "O", 0)),
-                Arguments.of(readMap("map2"), Map.of("X", 2, "O", 2))
+                Arguments.of(readMap("map1"), Map.of("X", 4, "O", 0), "4:0"),
+                Arguments.of(readMap("map2"), Map.of("X", 2, "O", 2), "2:2")
         );
     }
 

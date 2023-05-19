@@ -3,7 +3,6 @@ package com.games.theory.tictactoe.storage;
 import com.games.theory.tictactoe.model.Node;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
@@ -18,7 +17,7 @@ class LinePredictorTest {
     Node node1 = new Node(cols.get(0), rows.get(0));
     Node node2 = new Node(cols.get(1), rows.get(1));
     String pattern = LinePredictor.predictPattern(node1, node2);
-    assertEquals(predictedPattern, pattern);
+    assertEquals(predictedPattern, pattern, "Check if pattern is equal to " + predictedPattern);
   }
 
   private static Stream<Arguments> cases() {

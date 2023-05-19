@@ -17,10 +17,7 @@ import javafx.scene.text.Text;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -97,7 +94,14 @@ public class IntegrationService {
             do {
                 int randInt = random.nextInt(16) + 1;
                 log.info("Random move: {}", randInt);
-                pythonExecutor.processState(points.get("X").toString(), points.get("O").toString(), aiMap);
+                pythonExecutor.processState(
+                    points.get("X").toString(),
+                    points.get("O").toString(),
+                    Arrays
+                        .stream(aiMap)
+                        .flatMap(Arrays::stream)
+                        .toArray(String[]::new)
+                );
                 table.getChildren().get(randInt).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0,
                     0, MouseButton.PRIMARY, 1, true, true, true,
                     true, true, true, true, true,
