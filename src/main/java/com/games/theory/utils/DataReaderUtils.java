@@ -14,11 +14,16 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class DataReaderUtils {
-    public static File getScript(String script) {
+    public File getScript(String script) {
         return new File(Resources.getResource(script).getPath());
     }
 
-    public static Map<String, String> readModel(String model) {
+    public File getScript(FileType fileType) {
+        String path = determinePathByOS(fileType);
+        return new File(Resources.getResource(path).getPath());
+    }
+
+    public Map<String, String> readModel(String model) {
         try {
             List<String> text = Resources.readLines(Resources.getResource(model), StandardCharsets.UTF_8);
             Map<String, String> map = new HashMap<>();
@@ -31,6 +36,19 @@ public class DataReaderUtils {
         catch (Exception ex) {
             log.error("{}", ex.getMessage());
             return Collections.emptyMap();
+        }
+    }
+
+    private String determinePathByOS(FileType fileType) {
+        String os = System.getProperty("os.name").toLowerCase();
+        switch (os) {
+            case String s when s.contains("win") -> {
+                return "venv/Scripts/" + fileType.name().toLowerCase() + ".exe";
+            }
+            case String s when s.contains("mac") -> {
+                return "venv/bin/" + fileType.name().toLowerCase();
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + os);
         }
     }
 }

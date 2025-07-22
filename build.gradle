@@ -19,7 +19,11 @@ dependencies {
     implementation "com.google.guava:guava:$GUAVA_VERSION"
     implementation "commons-io:commons-io:$COMMONS_IO_VERSION"
     implementation "ch.qos.logback:logback-classic:$LOGBACK_VERSION"
-    testImplementation "org.junit.jupiter:junit-jupiter:$JUNIT_VERSION"
+
+    testImplementation platform("org.junit:junit-bom:$JUNIT_VERSION")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-engine"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
 
 compileJava {

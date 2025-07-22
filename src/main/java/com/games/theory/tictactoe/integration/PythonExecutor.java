@@ -2,6 +2,7 @@ package com.games.theory.tictactoe.integration;
 
 import com.games.theory.tictactoe.exception.AiException;
 import com.games.theory.utils.DataReaderUtils;
+import com.games.theory.utils.FileType;
 import com.games.theory.utils.LoggerUtils;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,7 +20,7 @@ public class PythonExecutor {
         try {
             // TODO skip for tests
             process = new ProcessBuilder(List.of(
-                DataReaderUtils.getScript("venv/Scripts/pip.exe").getPath(),
+                DataReaderUtils.getScript(FileType.PIP).getPath(),
                 "install",
                 "-r",
                 DataReaderUtils.getScript("games_theory/requirements.txt").getPath()
@@ -41,7 +42,7 @@ public class PythonExecutor {
         try {
             List<String> command = Stream.concat(
                 Stream.of(
-                    DataReaderUtils.getScript("venv/Scripts/python.exe").getPath(),
+                    DataReaderUtils.getScript(FileType.PYTHON).getPath(),
                     DataReaderUtils.getScript("games_theory/process.py").getPath(),
                     pointsX,
                     pointsO
