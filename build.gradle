@@ -1,0 +1,66 @@
+plugins {
+    id 'jacoco'
+    id 'application'
+    id 'io.freefair.lombok' version "$LOMBOK_PLUGIN_VERSION"
+    id 'org.openjfx.javafxplugin' version "$JAVAFX_PLUGIN_VERSION"
+    id "com.github.johnrengelman.shadow" version "$SHADE_PLUGIN_VERSION"
+    id "de.undercouch.download" version "$DOWNLOAD_PLUGIN_VERSION"
+}
+
+group 'com.games.theory'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "io.github.palexdev:materialfx:$MATERIALFX_VERSION"
+    implementation "com.google.guava:guava:$GUAVA_VERSION"
+    implementation "commons-io:commons-io:$COMMONS_IO_VERSION"
+    implementation "ch.qos.logback:logback-classic:$LOGBACK_VERSION"
+
+    testImplementation platform("org.junit:junit-bom:$JUNIT_VERSION")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-engine"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+}
+
+compileJava {
+    sourceCompatibility = "$JAVA_VERSION"
+    targetCompatibility = "$JAVA_VERSION"
+}
+
+apply from: 'libs.gradle'
+
+compileTestJava {
+    dependsOn embedGameTheoryRelease
+    sourceCompatibility = "$JAVA_VERSION"
+    targetCompatibility = "$JAVA_VERSION"
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+application {
+    mainClass = 'com.games.theory.GUI'
+}
+
+javafx {
+    version = "$JAVAFX_VERSION"
+    modules = ['javafx.controls', 'javafx.fxml']
+}
+
+jacoco {
+    toolVersion = "$JACOCO_PLUGIN_VERSION"
+}
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        csv.required = false
+    }
+}

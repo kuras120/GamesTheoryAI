@@ -23,11 +23,24 @@
 hs_err_pid*
 
 #Intellij config
-.idea/*
-!.idea/runConfigurations
+.idea/
 
 #Compiled things
 target/
 
 #IML files
 *.iml
+
+#Python
+env/
+venv/
+
+#Auto-generated POMs
+dependency-reduced-pom.xml
+
+# Build
+build/
+.gradle/
+!gradle-wrapper.jar
+
+AI/
