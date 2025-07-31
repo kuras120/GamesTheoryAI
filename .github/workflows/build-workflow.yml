@@ -42,13 +42,8 @@ jobs:
     - name: Build application
       run: ./gradlew clean build
       
-    - name: Upload coverage report to Codacy
+    - name: Upload coverage report
       if: success()
       env:
         CODACY_PROJECT_TOKEN: ${{ secrets.CODACY_PROJECT_TOKEN }}
-      run: |
-        if [ -n "$CODACY_PROJECT_TOKEN" ]; then
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
-        else
-          echo "CODACY_PROJECT_TOKEN not set, skipping coverage upload"
-        fi
+      run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Java -r build/reports/jacoco/test/jacocoTestReport.xml
