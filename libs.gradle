@@ -1,34 +1,27 @@
-tasks.register('downloadGameTheoryRelease', Download)
-def download = tasks.downloadGameTheoryRelease {
-    src 'https://github.com/kuras120/NeuralNetworks/releases/latest/download/games_theory.zip'
-    dest new File(buildDir, 'games_theory.zip')
-}
+import groovy.json.JsonSlurper
 
-tasks.register('embedGameTheoryRelease', Copy)
-def embed = tasks.embedGameTheoryRelease {
-    dependsOn download
-    from zipTree(downloadGameTheoryRelease.dest)
-    into buildDir.toString() + '/resources/main'
+tasks.register('downloadGameTheoryRelease', Download)
+def downloadGameTheoryRelease = tasks.downloadGameTheoryRelease {
+    doFirst {
+        def apiUrl = 'https://api.github.com/repos/kuras120/NeuralNetworks/releases/latest'
+        def json = new JsonSlurper().parseText(new URL(apiUrl).text)
+        def asset = json.assets.find { it.name.endsWith('.whl') }
+        if (asset == null) throw new GradleException("No .whl asset found in latest release")
+        src asset.browser_download_url
+        println "Downloading latest release: ${asset.name}"
+    }
+    dest new File(buildDir.toString() + '/resources/main', 'games_theory-1.0.0-py3-none-any.whl')
 }
 
 tasks.register('createPythonVenv', Exec)
-def venv = tasks.createPythonVenv {
+def createPythonVenv = tasks.createPythonVenv {
     workingDir buildDir.toString() + '/resources/main'
     commandLine 'python3', '-m', 'venv', 'venv'
 }
 
-tasks.register('cleanupZips', Delete)
-def cleanup = tasks.cleanupZips {
-    delete fileTree(buildDir) {
-        include '*.zip'
-    }
-}
-
 jar {
-    dependsOn embed
-    dependsOn venv
-    dependsOn cleanup
-    cleanup.mustRunAfter embed
+    dependsOn downloadGameTheoryRelease
+    dependsOn createPythonVenv
 }
 
 shadowJar {

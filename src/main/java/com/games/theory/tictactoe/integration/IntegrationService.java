@@ -3,6 +3,8 @@ package com.games.theory.tictactoe.integration;
 import com.games.theory.tictactoe.exception.GameException;
 import com.games.theory.tictactoe.model.Node;
 import com.games.theory.tictactoe.processor.ProcessorExecutor;
+import com.games.theory.utils.DataReaderUtils;
+import com.games.theory.utils.FileType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseButton;
@@ -37,7 +39,12 @@ public class IntegrationService {
 
     public void initialize() {
         random = new Random();
-        pythonExecutor.installDependencies();
+        pythonExecutor.initialize(
+                DataReaderUtils.getScript(FileType.PIP).getPath(),
+                "install",
+                DataReaderUtils.getScript("games_theory-1.0.0-py3-none-any.whl").getPath()
+        );
+        pythonExecutor.initialize(DataReaderUtils.getScript(FileType.GAMES_THEORY_INIT).getPath());
         if (table.getColumnCount() != table.getRowCount()) {
             throw new GameException("Number of columns and rows must be equal");
         }

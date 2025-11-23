@@ -16,15 +16,10 @@ import java.util.stream.Stream;
 public class PythonExecutor {
     private Process process;
 
-    public void installDependencies() {
+    public void initialize(String... command) {
         try {
             // TODO skip for tests
-            process = new ProcessBuilder(List.of(
-                DataReaderUtils.getScript(FileType.PIP).getPath(),
-                "install",
-                "-r",
-                DataReaderUtils.getScript("games_theory/requirements.txt").getPath()
-            )).start();
+            process = new ProcessBuilder(command).start();
             if (process.waitFor(1, TimeUnit.MINUTES)) {
                 LoggerUtils.processLog(process);
                 log.info("AI env installation completed");
@@ -42,8 +37,7 @@ public class PythonExecutor {
         try {
             List<String> command = Stream.concat(
                 Stream.of(
-                    DataReaderUtils.getScript(FileType.PYTHON).getPath(),
-                    DataReaderUtils.getScript("games_theory/process.py").getPath(),
+                    DataReaderUtils.getScript(FileType.GAMES_THEORY).getPath(),
                     pointsX,
                     pointsO
                 ),

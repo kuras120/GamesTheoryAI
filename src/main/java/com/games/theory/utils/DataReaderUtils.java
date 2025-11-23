@@ -43,10 +43,10 @@ public class DataReaderUtils {
         String os = System.getProperty("os.name").toLowerCase();
         switch (os) {
             case String s when s.contains("win") -> {
-                return "venv/Scripts/" + fileType.name().toLowerCase() + ".exe";
+                return "venv/Scripts/" + fileType.getCommand() + ".exe";
             }
             case String s when s.contains("mac") -> {
-                return "venv/bin/" + fileType.name().toLowerCase();
+                return "venv/bin/" + fileType.getCommand();
             }
             default -> throw new IllegalStateException("Unexpected value: " + os);
         }

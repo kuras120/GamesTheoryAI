@@ -34,7 +34,7 @@ compileJava {
 apply from: 'libs.gradle'
 
 compileTestJava {
-    dependsOn embedGameTheoryRelease
+    dependsOn downloadGameTheoryRelease
     sourceCompatibility = "$JAVA_VERSION"
     targetCompatibility = "$JAVA_VERSION"
 }
