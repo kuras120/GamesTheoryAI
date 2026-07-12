@@ -1,14 +1,14 @@
 package com.games.theory.tictactoe.integration;
 
 import com.games.theory.tictactoe.exception.GameException;
+import com.games.theory.tictactoe.exception.AiException;
 import com.games.theory.tictactoe.model.Node;
 import com.games.theory.tictactoe.processor.ProcessorExecutor;
 import com.games.theory.utils.DataReaderUtils;
 import com.games.theory.utils.FileType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.application.Platform;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -32,13 +32,11 @@ public class IntegrationService {
 
     private Map<String, Integer> points;
     private String[][] aiMap;
-    private boolean repeat;
-    private Random random;
     private boolean turn;
     private int size;
+    private long stateGeneration;
 
     public void initialize() {
-        random = new Random();
         pythonExecutor.initialize(
                 DataReaderUtils.getScript(FileType.PIP).getPath(),
                 "install",
@@ -59,6 +57,7 @@ public class IntegrationService {
     }
 
     public void setInitialState() {
+        stateGeneration++;
         points = new HashMap<>();
         points.put("X", 0);
         points.put("O", 0);
@@ -66,7 +65,6 @@ public class IntegrationService {
         aiMap = new String[size][size];
         table.setDisable(false);
         turn = true;
-        repeat = false;
     }
 
     private void addPane(int rowIndex, int colIndex) {
@@ -75,46 +73,80 @@ public class IntegrationService {
         pane.setOnMouseClicked(e -> {
             Node node = (Node) pane.getUserData();
             if (node.getMarkName().isEmpty()) {
-                Text text = new Text();
-                text.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 40));
-                String mark;
-                if (turn) mark = "X";
-                else mark = "O";
-                aiMap[rowIndex][colIndex] = mark;
-                text.setText(mark);
-                node.setMarkName(mark);
-                pane.getChildren().add(text);
-                observe();
-                changeTurn();
-                repeat = false;
-            }
-            else {
-                repeat = true;
+                placeMark(pane);
             }
         });
         table.add(pane, colIndex, rowIndex);
     }
 
+    private void placeMark(Pane pane) {
+        Node node = (Node) pane.getUserData();
+        String mark = turn ? "X" : "O";
+        Text text = new Text(mark);
+        text.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 40));
+        aiMap[node.getRowIndex()][node.getColIndex()] = mark;
+        node.setMarkName(mark);
+        pane.getChildren().add(text);
+        observe();
+        changeTurn();
+    }
+
     private void changeTurn() {
         turn = !turn;
         if (!turn && aiCheckbox.isSelected()) {
-            do {
-                int randInt = random.nextInt(16) + 1;
-                log.info("Random move: {}", randInt);
-                pythonExecutor.processState(
+            table.setDisable(true);
+            long requestedGeneration = stateGeneration;
+            String[] board = Arrays
+                .stream(aiMap)
+                .flatMap(Arrays::stream)
+                .toArray(String[]::new);
+            Thread.startVirtualThread(() -> {
+                try {
+                    AiMove move = pythonExecutor.processState(
                     points.get("X").toString(),
                     points.get("O").toString(),
-                    Arrays
-                        .stream(aiMap)
-                        .flatMap(Arrays::stream)
-                        .toArray(String[]::new)
-                );
-                table.getChildren().get(randInt).fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0,
-                    0, MouseButton.PRIMARY, 1, true, true, true,
-                    true, true, true, true, true,
-                    true, true, null));
-            } while (repeat);
+                    board
+                    );
+                    Platform.runLater(() -> {
+                        if (requestedGeneration != stateGeneration) {
+                            return;
+                        }
+                        try {
+                            playAiMove(move);
+                        } catch (AiException exception) {
+                            log.error("Unable to play AI move", exception);
+                            table.setDisable(false);
+                        }
+                    });
+                } catch (AiException exception) {
+                    log.error("Unable to play AI move", exception);
+                    Platform.runLater(() -> table.setDisable(false));
+                }
+            });
         }
+    }
+
+    private void playAiMove(AiMove move) {
+        if (move.x() < 0 || move.x() >= size || move.y() < 0 || move.y() >= size) {
+            table.setDisable(false);
+            throw new AiException("AI move is outside the board: " + move);
+        }
+        Pane pane = table.getChildren().stream()
+            .filter(Pane.class::isInstance)
+            .map(Pane.class::cast)
+            .filter(cell -> {
+                Node node = (Node) cell.getUserData();
+                return node.getColIndex() == move.x() && node.getRowIndex() == move.y();
+            })
+            .findFirst()
+            .orElseThrow(() -> new AiException("AI cell does not exist: " + move));
+        Node node = (Node) pane.getUserData();
+        if (!node.getMarkName().isEmpty()) {
+            table.setDisable(false);
+            throw new AiException("AI selected an occupied cell: " + move);
+        }
+        table.setDisable(false);
+        placeMark(pane);
     }
 
     private void observe() {
