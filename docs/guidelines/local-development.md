@@ -13,4 +13,6 @@ The project requires JDK 21 and Python 3.
 ```
 
 The Gradle build prepares the Python environment required by the tic-tac-toe
-AI. Generated runtime data is stored under `data/` and is not committed.
+AI. The build-local virtual environment is platform-specific and is not packed
+into the application JAR. Generated runtime data is stored under `data/` and is
+not committed.

@@ -22,8 +22,12 @@ def createPythonVenv = tasks.createPythonVenv {
 jar {
     dependsOn downloadGameTheoryRelease
     dependsOn createPythonVenv
+    // A virtual environment contains platform-specific binaries and symlinks.
+    // Keep it available for local execution, but never package it in the JAR.
+    exclude 'venv/**'
 }
 
 shadowJar {
     dependsOn jar
+    exclude 'venv/**'
 }
