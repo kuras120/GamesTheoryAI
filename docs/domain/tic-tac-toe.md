@@ -9,8 +9,8 @@ plays `O`. The board is flattened row by row before being passed to the AI; `N`
 represents an empty cell. The returned coordinate uses `x` as the zero-based
 column and `y` as the zero-based row.
 
-The process-level contract and setup are documented separately in the
-[AI integration guidelines](../guidelines/ai-integration.md).
+The opponent behavior, process contract, and runtime setup are documented in
+the [tic-tac-toe AI domain](tic-tac-toe-ai.md).
 
 ## Source map
 
