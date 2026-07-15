@@ -1,36 +1,149 @@
-tasks.register('downloadGameTheoryRelease', Download)
-def download = tasks.downloadGameTheoryRelease {
-    src 'https://github.com/kuras120/NeuralNetworks/releases/latest/download/games_theory.zip'
-    dest new File(buildDir, 'games_theory.zip')
+import groovy.json.JsonSlurper
+
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+import java.util.zip.ZipFile
+
+def resolveWheelAsset(String version) {
+    def encodedVersion = URLEncoder.encode(version, StandardCharsets.UTF_8)
+    def apiUrl = "https://api.github.com/repos/kuras120/NeuralNetworks/releases/tags/${encodedVersion}"
+    def release = new JsonSlurper().parseText(new URL(apiUrl).text)
+    def asset = release.assets.find { it.name.endsWith('.whl') }
+    if (asset == null) {
+        throw new GradleException("No .whl asset found in release ${version}")
+    }
+    [tag: release.tag_name, name: asset.name, url: asset.browser_download_url]
 }
 
-tasks.register('embedGameTheoryRelease', Copy)
-def embed = tasks.embedGameTheoryRelease {
-    dependsOn download
-    from zipTree(downloadGameTheoryRelease.dest)
-    into buildDir.toString() + '/resources/main'
+def requireSingleWheel(Project project, File directory) {
+    def wheels = project.fileTree(directory) { include '*.whl' }.files
+    if (wheels.size() != 1) {
+        throw new GradleException("Expected exactly one games_theory wheel, found ${wheels.size()}")
+    }
+    wheels.first()
 }
 
-tasks.register('createPythonVenv', Exec)
-def venv = tasks.createPythonVenv {
-    workingDir buildDir.toString() + '/resources/main'
-    commandLine 'python3', '-m', 'venv', 'venv'
+def downloadWheelDependencies(
+    Project project,
+    List<String> pythonCommand,
+    File applicationWheel,
+    File constraintsFile,
+    File wheelhouseDirectory
+) {
+    project.delete wheelhouseDirectory
+    wheelhouseDirectory.mkdirs()
+    def command = new ArrayList<>(pythonCommand)
+    command.addAll([
+        '-m', 'pip', 'download',
+        '--disable-pip-version-check',
+        '--only-binary=:all:',
+        '--constraint', constraintsFile.absolutePath,
+        '--dest', wheelhouseDirectory.absolutePath,
+        applicationWheel.absolutePath
+    ])
+    project.exec { commandLine command }
 }
 
-tasks.register('cleanupZips', Delete)
-def cleanup = tasks.cleanupZips {
-    delete fileTree(buildDir) {
-        include '*.zip'
+def requireUniversalWheels(Project project, File wheelhouseDirectory) {
+    def wheels = project.fileTree(wheelhouseDirectory) { include '*.whl' }.files.sort { it.name }
+    if (wheels.isEmpty()) {
+        throw new GradleException('Python wheelhouse is empty')
+    }
+    wheels.each { wheel -> requireUniversalWheel(wheel) }
+    wheels
+}
+
+def requireUniversalWheel(File wheel) {
+    def matcher = wheel.name =~ /^.+-.+-([^-]+)-([^-]+)-([^-]+)\.whl$/
+    if (!matcher.matches() || matcher.group(2) != 'none' || matcher.group(3) != 'any') {
+        throw new GradleException("Platform-specific wheel is not supported: ${wheel.name}")
     }
 }
 
-jar {
-    dependsOn embed
-    dependsOn venv
-    dependsOn cleanup
-    cleanup.mustRunAfter embed
+def readPackageCoordinates(List<File> wheels) {
+    def applicationWheel = wheels.find { it.name.startsWith('games_theory-') }
+    if (applicationWheel == null) {
+        throw new GradleException('games_theory wheel is missing from the prepared wheelhouse')
+    }
+    def metadata = readWheelMetadata(applicationWheel)
+    def name = metadata.readLines().find { it.startsWith('Name: ') }?.substring('Name: '.length())
+    def version = metadata.readLines().find { it.startsWith('Version: ') }?.substring('Version: '.length())
+    if (name == null || version == null) {
+        throw new GradleException("Package name or version is missing from ${applicationWheel.name}")
+    }
+    [name: name, version: version]
 }
 
-shadowJar {
-    dependsOn jar
+def readWheelMetadata(File wheel) {
+    new ZipFile(wheel).withCloseable { zip ->
+        def entry = zip.entries().find { it.name.endsWith('.dist-info/METADATA') }
+        if (entry == null) {
+            throw new GradleException("METADATA is missing from ${wheel.name}")
+        }
+        zip.getInputStream(entry).getText(StandardCharsets.UTF_8.name())
+    }
 }
+
+def writeWheelhouseManifest(File wheelhouseDirectory, List<File> wheels, Map coordinates) {
+    def manifest = new StringBuilder("requirement\t${coordinates.name}==${coordinates.version}\n")
+    wheels.each { wheel ->
+        manifest.append("wheel\t${sha256(wheel)}\t${wheel.name}\n")
+    }
+    new File(wheelhouseDirectory, 'wheelhouse-manifest.txt').setText(
+        manifest.toString(),
+        StandardCharsets.UTF_8.name()
+    )
+}
+
+def sha256(File file) {
+    def digest = MessageDigest.getInstance('SHA-256')
+    file.withInputStream { input ->
+        byte[] buffer = new byte[8192]
+        int read
+        while ((read = input.read(buffer)) != -1) {
+            digest.update(buffer, 0, read)
+        }
+    }
+    digest.digest().encodeHex().toString()
+}
+
+def gameTheoryVersion = providers.gradleProperty('GAME_THEORY_VERSION').get()
+def defaultPythonCommand = System.getProperty('os.name').toLowerCase().contains('win') ? 'python' : 'python3'
+def pythonCommand = providers.gradleProperty('PYTHON_COMMAND')
+    .getOrElse(defaultPythonCommand)
+    .trim()
+    .split(/\s+/)
+    .toList()
+def downloadedWheelDirectory = layout.buildDirectory.dir('python-distribution').get().asFile
+def generatedResourceDirectory = layout.buildDirectory.dir('generated-resources').get().asFile
+def wheelhouseDirectory = new File(generatedResourceDirectory, 'python-wheelhouse')
+def constraintsFile = file('config/python-wheelhouse-constraints.txt')
+
+tasks.register('downloadGameTheoryRelease', Download) {
+    doFirst {
+        delete downloadedWheelDirectory
+        downloadedWheelDirectory.mkdirs()
+        def asset = resolveWheelAsset(gameTheoryVersion)
+        src asset.url
+        dest new File(downloadedWheelDirectory, asset.name)
+        println "Downloading games_theory release ${asset.tag}: ${asset.name}"
+    }
+    overwrite true
+}
+
+tasks.register('preparePythonWheelhouse') {
+    dependsOn downloadGameTheoryRelease
+    inputs.file constraintsFile
+    inputs.dir downloadedWheelDirectory
+    outputs.dir wheelhouseDirectory
+
+    doLast {
+        def applicationWheel = requireSingleWheel(project, downloadedWheelDirectory)
+        downloadWheelDependencies(project, pythonCommand, applicationWheel, constraintsFile, wheelhouseDirectory)
+        def wheels = requireUniversalWheels(project, wheelhouseDirectory)
+        writeWheelhouseManifest(wheelhouseDirectory, wheels, readPackageCoordinates(wheels))
+    }
+}
+
+sourceSets.main.resources.srcDir generatedResourceDirectory
+processResources.dependsOn preparePythonWheelhouse

@@ -1,59 +1,69 @@
 package com.games.theory.tictactoe.integration;
 
 import com.games.theory.tictactoe.exception.AiException;
-import com.games.theory.utils.DataReaderUtils;
-import com.games.theory.utils.FileType;
-import com.games.theory.utils.LoggerUtils;
+import com.games.theory.utils.CommandResult;
+import com.games.theory.utils.CommandRunner;
+import com.games.theory.utils.ProcessCommandRunner;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.stream.Stream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public class PythonExecutor {
-    private Process process;
+    private static final Duration MOVE_TIMEOUT = Duration.ofMinutes(1);
+    private static final Pattern MOVE_PATTERN = Pattern.compile(
+        "\\{\\s*\\\"x\\\"\\s*:\\s*(-?\\d+)\\s*,\\s*\\\"y\\\"\\s*:\\s*(-?\\d+)\\s*}"
+    );
 
-    public void installDependencies() {
+    private final CommandRunner commandRunner;
+
+    public PythonExecutor() {
+        this(new ProcessCommandRunner());
+    }
+
+    PythonExecutor(CommandRunner commandRunner) {
+        this.commandRunner = commandRunner;
+    }
+
+    public AiMove processState(PythonRuntime runtime, String pointsX, String pointsO, String... aiMap) {
+        List<String> command = new ArrayList<>();
+        command.add(runtime.gamesTheoryExecutable().toString());
+        command.add("--config");
+        command.add(runtime.applicationDataDirectory().toString());
+        command.add(pointsX);
+        command.add(pointsO);
+        Arrays.stream(aiMap).map(mark -> mark == null ? "N" : mark).forEach(command::add);
+        log.debug("Executing AI command: {}", command);
+
         try {
-            // TODO skip for tests
-            process = new ProcessBuilder(List.of(
-                DataReaderUtils.getScript(FileType.PIP).getPath(),
-                "install",
-                "-r",
-                DataReaderUtils.getScript("games_theory/requirements.txt").getPath()
-            )).start();
-            if (process.waitFor(1, TimeUnit.MINUTES)) {
-                LoggerUtils.processLog(process);
-                log.info("AI env installation completed");
-            } else {
-                process.destroy();
-                throw new TimeoutException("Time exceeded for AI env installation process");
+            CommandResult result = commandRunner.run(List.copyOf(command), MOVE_TIMEOUT);
+            if (!result.stderr().isBlank()) {
+                log.debug("AI diagnostic output:\n{}", result.stderr());
             }
-        } catch (Exception ex) {
-            log.error("AI error {}", ex.getMessage());
-            throw new AiException("AI error", ex);
+            if (!result.successful()) {
+                throw new AiException("AI process exited with code " + result.exitCode());
+            }
+            return parseMove(result.stdout());
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new AiException("AI process was interrupted", exception);
+        } catch (IOException | TimeoutException exception) {
+            throw new AiException("Unable to execute AI process", exception);
         }
     }
 
-    public void processState(String pointsX, String pointsO, String... aiMap) {
-        try {
-            List<String> command = Stream.concat(
-                Stream.of(
-                    DataReaderUtils.getScript(FileType.PYTHON).getPath(),
-                    DataReaderUtils.getScript("games_theory/process.py").getPath(),
-                    pointsX,
-                    pointsO
-                ),
-                Arrays.stream(aiMap).map(mark -> mark == null ? "N" : mark)
-            ).toList();
-            log.debug(command.toString());
-            process = new ProcessBuilder(command).start();
-            LoggerUtils.processLog(process);
-        } catch (Exception ex) {
-            log.error("AI error {}", ex.getMessage());
+    static AiMove parseMove(String stdout) {
+        Matcher matcher = MOVE_PATTERN.matcher(stdout.trim());
+        if (!matcher.matches()) {
+            throw new AiException("Invalid AI output: expected JSON with numeric x and y coordinates");
         }
+        return new AiMove(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
     }
 }
