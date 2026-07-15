@@ -34,28 +34,45 @@ final class PythonInterpreterDiscovery {
     }
 
     PythonDiscoveryResult discover() {
+        try {
+            return discoverInterruptibly();
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            return PythonDiscoveryResult.unavailable(SETUP_FAILED_MESSAGE);
+        }
+    }
+
+    private PythonDiscoveryResult discoverInterruptibly() throws InterruptedException {
         PythonVersion newestUnsupported = null;
         for (List<String> prefix : candidates(osName)) {
-            try {
-                CommandResult result = commandRunner.run(append(prefix, "--version"), DISCOVERY_TIMEOUT);
-                Optional<PythonVersion> parsed = parseSuccessfulVersion(result);
-                if (parsed.isEmpty()) {
-                    continue;
-                }
-                PythonVersion version = parsed.get();
-                if (version.supported()) {
-                    return PythonDiscoveryResult.available(prefix);
-                }
-                if (newestUnsupported == null || version.compareTo(newestUnsupported) > 0) {
-                    newestUnsupported = version;
-                }
-            } catch (InterruptedException exception) {
-                Thread.currentThread().interrupt();
-                return PythonDiscoveryResult.unavailable(SETUP_FAILED_MESSAGE);
-            } catch (IOException | TimeoutException exception) {
-                log.debug("Python candidate is unavailable: {}", prefix, exception);
+            Optional<PythonVersion> discoveredVersion = discoverVersion(prefix);
+            if (discoveredVersion.isEmpty()) {
+                continue;
             }
+            PythonVersion version = discoveredVersion.get();
+            if (version.supported()) {
+                return PythonDiscoveryResult.available(prefix);
+            }
+            newestUnsupported = newerVersion(newestUnsupported, version);
         }
+        return unavailableResult(newestUnsupported);
+    }
+
+    private Optional<PythonVersion> discoverVersion(List<String> prefix) throws InterruptedException {
+        try {
+            CommandResult result = commandRunner.run(append(prefix, "--version"), DISCOVERY_TIMEOUT);
+            return parseSuccessfulVersion(result);
+        } catch (IOException | TimeoutException exception) {
+            log.debug("Python candidate is unavailable: {}", prefix, exception);
+            return Optional.empty();
+        }
+    }
+
+    private static PythonVersion newerVersion(PythonVersion current, PythonVersion candidate) {
+        return current == null || candidate.compareTo(current) > 0 ? candidate : current;
+    }
+
+    private static PythonDiscoveryResult unavailableResult(PythonVersion newestUnsupported) {
         if (newestUnsupported == null) {
             return PythonDiscoveryResult.unavailable(MISSING_PYTHON_MESSAGE);
         }
