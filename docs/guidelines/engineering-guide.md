@@ -10,6 +10,12 @@ should not be scattered through implementation comments.
   purpose, contents, quick start, and the documentation entry point.
 - Describe implemented product behavior and external contracts in
   `docs/domain`.
+- Keep domain documentation independent of implementation. Do not include
+  source maps, file paths, class names, frameworks, build tools, or repository
+  structure there; domain rules and contracts define the behavior that code
+  must follow.
+- Put mappings between domain concepts and their implementation in repository
+  or engineering guides, never in domain documents.
 - Keep operational repository information in the repository guide.
 - Put evaluated alternatives in `docs/research`; link the directory rather than
   individual research files from `AGENTS.md`.
@@ -30,6 +36,15 @@ active project before review.
 
 ## Implementation boundaries
 
+- Give each class, module, and build task one primary responsibility. Prefer
+  small collaborators composed by an orchestrator over a long class that mixes
+  discovery, process execution, parsing, hashing, and filesystem operations.
+- Keep orchestrators focused on sequencing and mapping outcomes. Move detailed
+  work behind narrow interfaces or named methods that can be understood and
+  tested independently.
+- Keep build task declarations focused on dependencies, inputs, outputs, and
+  high-level actions. Extract multi-step build logic into small, intention-
+  revealing helper methods.
 - Keep game rules and product behavior separate from external-process and
   filesystem infrastructure.
 - Keep shared utilities free of tic-tac-toe- or chess-specific decisions.

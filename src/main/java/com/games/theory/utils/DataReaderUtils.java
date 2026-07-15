@@ -4,8 +4,12 @@ import com.google.common.io.Resources;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +18,20 @@ import java.util.Map;
 @Slf4j
 @UtilityClass
 public class DataReaderUtils {
-    public File getScript(String script) {
-        return new File(Resources.getResource(script).getPath());
+    public String readResource(String resource) throws IOException {
+        try (InputStream input = openResource(resource)) {
+            return new String(input.readAllBytes(), StandardCharsets.UTF_8);
+        }
     }
 
-    public File getScript(FileType fileType) {
-        String path = determinePathByOS(fileType);
-        return new File(Resources.getResource(path).getPath());
+    public void copyResource(String resource, Path destination) throws IOException {
+        try (InputStream input = openResource(resource)) {
+            Path parent = destination.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            Files.copy(input, destination, StandardCopyOption.REPLACE_EXISTING);
+        }
     }
 
     public Map<String, String> readModel(String model) {
@@ -39,16 +50,11 @@ public class DataReaderUtils {
         }
     }
 
-    private String determinePathByOS(FileType fileType) {
-        String os = System.getProperty("os.name").toLowerCase();
-        switch (os) {
-            case String s when s.contains("win") -> {
-                return "venv/Scripts/" + fileType.getCommand() + ".exe";
-            }
-            case String s when s.contains("mac") -> {
-                return "venv/bin/" + fileType.getCommand();
-            }
-            default -> throw new IllegalStateException("Unexpected value: " + os);
+    private InputStream openResource(String resource) throws IOException {
+        InputStream input = DataReaderUtils.class.getClassLoader().getResourceAsStream(resource);
+        if (input == null) {
+            throw new IOException("Resource not found: " + resource);
         }
+        return input;
     }
 }

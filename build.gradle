@@ -17,7 +17,6 @@ repositories {
 dependencies {
     implementation "io.github.palexdev:materialfx:$MATERIALFX_VERSION"
     implementation "com.google.guava:guava:$GUAVA_VERSION"
-    implementation "commons-io:commons-io:$COMMONS_IO_VERSION"
     implementation "ch.qos.logback:logback-classic:$LOGBACK_VERSION"
 
     testImplementation platform("org.junit:junit-bom:$JUNIT_VERSION")
@@ -34,7 +33,6 @@ compileJava {
 apply from: 'libs.gradle'
 
 compileTestJava {
-    dependsOn downloadGameTheoryRelease
     sourceCompatibility = "$JAVA_VERSION"
     targetCompatibility = "$JAVA_VERSION"
 }

@@ -1,75 +1,61 @@
 package com.games.theory.tictactoe.integration;
 
 import com.games.theory.tictactoe.exception.AiException;
-import com.games.theory.utils.DataReaderUtils;
-import com.games.theory.utils.FileType;
-import com.games.theory.utils.LoggerUtils;
+import com.games.theory.utils.CommandResult;
+import com.games.theory.utils.CommandRunner;
+import com.games.theory.utils.ProcessCommandRunner;
 import lombok.extern.slf4j.Slf4j;
 
-import java.nio.charset.StandardCharsets;
+import java.io.IOException;
+import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 @Slf4j
 public class PythonExecutor {
+    private static final Duration MOVE_TIMEOUT = Duration.ofMinutes(1);
     private static final Pattern MOVE_PATTERN = Pattern.compile(
         "\\{\\s*\\\"x\\\"\\s*:\\s*(-?\\d+)\\s*,\\s*\\\"y\\\"\\s*:\\s*(-?\\d+)\\s*}"
     );
-    private Process process;
 
-    public void initialize(String... command) {
-        try {
-            // TODO skip for tests
-            process = new ProcessBuilder(command).start();
-            if (process.waitFor(1, TimeUnit.MINUTES)) {
-                LoggerUtils.processLog(process);
-                log.info("AI env installation completed");
-            } else {
-                process.destroy();
-                throw new TimeoutException("Time exceeded for AI env installation process");
-            }
-        } catch (Exception ex) {
-            log.error("AI error {}", ex.getMessage());
-            throw new AiException("AI error", ex);
-        }
+    private final CommandRunner commandRunner;
+
+    public PythonExecutor() {
+        this(new ProcessCommandRunner());
     }
 
-    public AiMove processState(String pointsX, String pointsO, String... aiMap) {
+    PythonExecutor(CommandRunner commandRunner) {
+        this.commandRunner = commandRunner;
+    }
+
+    public AiMove processState(PythonRuntime runtime, String pointsX, String pointsO, String... aiMap) {
+        List<String> command = new ArrayList<>();
+        command.add(runtime.gamesTheoryExecutable().toString());
+        command.add("--config");
+        command.add(runtime.applicationDataDirectory().toString());
+        command.add(pointsX);
+        command.add(pointsO);
+        Arrays.stream(aiMap).map(mark -> mark == null ? "N" : mark).forEach(command::add);
+        log.debug("Executing AI command: {}", command);
+
         try {
-            List<String> command = Stream.concat(
-                Stream.of(
-                    DataReaderUtils.getScript(FileType.GAMES_THEORY).getPath(),
-                    pointsX,
-                    pointsO
-                ),
-                Arrays.stream(aiMap).map(mark -> mark == null ? "N" : mark)
-            ).toList();
-            log.debug(command.toString());
-            process = new ProcessBuilder(command).start();
-            CompletableFuture<String> stdoutFuture = readStream(process.getInputStream());
-            CompletableFuture<String> stderrFuture = readStream(process.getErrorStream());
-            int exitCode = process.waitFor();
-            String stdout = stdoutFuture.join();
-            String stderr = stderrFuture.join();
-            if (!stderr.isBlank()) {
-                log.debug("AI diagnostic output:\n{}", stderr);
+            CommandResult result = commandRunner.run(List.copyOf(command), MOVE_TIMEOUT);
+            if (!result.stderr().isBlank()) {
+                log.debug("AI diagnostic output:\n{}", result.stderr());
             }
-            if (exitCode != 0) {
-                throw new AiException("AI process exited with code " + exitCode);
+            if (!result.successful()) {
+                throw new AiException("AI process exited with code " + result.exitCode());
             }
-            return parseMove(stdout);
-        } catch (Exception ex) {
-            log.error("AI error {}", ex.getMessage());
-            if (ex instanceof AiException aiException) {
-                throw aiException;
-            }
-            throw new AiException("AI error", ex);
+            return parseMove(result.stdout());
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            throw new AiException("AI process was interrupted", exception);
+        } catch (IOException | TimeoutException exception) {
+            throw new AiException("Unable to execute AI process", exception);
         }
     }
 
@@ -79,15 +65,5 @@ public class PythonExecutor {
             throw new AiException("Invalid AI output: expected JSON with numeric x and y coordinates");
         }
         return new AiMove(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)));
-    }
-
-    private static CompletableFuture<String> readStream(java.io.InputStream stream) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-            } catch (java.io.IOException exception) {
-                throw new AiException("Unable to read AI process output", exception);
-            }
-        });
     }
 }

@@ -16,11 +16,11 @@ models.
 
 ## Quick Start
 
-Make sure JDK 21 and Python 3 are installed, then run:
+Make sure JDK 21 and Python 3.9 or newer are installed, then run:
 
 ```shell
 ./gradlew run                         # chess
-./gradlew run --args='tictactoe'     # tic-tac-toe against AI
+./gradlew run --args='tictactoe'     # tic-tac-toe
 ./gradlew test                        # automated tests
 ```
 

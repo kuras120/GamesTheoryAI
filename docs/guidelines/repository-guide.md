@@ -6,7 +6,9 @@ this file for setup, module maps, workflows, testing, and release details.
 
 ## Requirements and commands
 
-Local development currently requires JDK 21 and Python 3.
+Local development requires JDK 21 and Python 3.9 or newer. Python is used to
+prepare packaged AI dependencies during the build and to create the local AI
+runtime when the application starts.
 
 ```shell
 ./gradlew run                         # chess
@@ -21,8 +23,8 @@ Local development currently requires JDK 21 and Python 3.
 - `src/main/java/com/games/theory/chess` — chess JavaFX controller and model.
 - `src/main/java/com/games/theory/tictactoe` — tic-tac-toe UI, rules, storage,
   and Python integration.
-- `src/main/java/com/games/theory/utils` — shared resource, logging, and process
-  helpers.
+- `src/main/java/com/games/theory/utils` — shared resource, application-path,
+  and process helpers.
 - `src/main/resources` — FXML views, bundled board data, and build-provided
   resources.
 - `src/test` — unit tests for tic-tac-toe rules and integration parsing.
@@ -31,11 +33,13 @@ Local development currently requires JDK 21 and Python 3.
 
 ## Documentation map
 
-- [Chess domain](../domain/chess.md) — current chess behavior and source map.
+- [Chess domain](../domain/chess.md) — current chess behavior.
 - [Tic-tac-toe domain](../domain/tic-tac-toe.md) — board, turns, scoring, and
-  source map.
+  player-facing activity.
 - [Tic-tac-toe AI domain](../domain/tic-tac-toe-ai.md) — opponent behavior,
-  process contract, validation, and current runtime setup.
+  move contract, validation, and availability behavior.
+- [Python runtime guide](python-runtime.md) — dependency packaging, local
+  environment bootstrap, paths, and failure handling.
 - [Engineering guide](engineering-guide.md) — project-wide design, testing,
   and review rules.
 - [Project lifecycle](project-lifecycle.md) — staged approval workflow for
@@ -57,10 +61,8 @@ manual verification item in the project review.
 
 ## Python dependency and release resources
 
-The current build downloads the latest `games_theory` wheel from the GitHub
-releases of `kuras120/NeuralNetworks`. The current runtime setup is described in
-the [tic-tac-toe AI domain](../domain/tic-tac-toe-ai.md).
-
-Planned delivery changes are documented under `docs/projects` and must not be
-treated as implemented behavior until their proposal and implementation have
-both been accepted.
+`GAME_THEORY_VERSION` in `gradle.properties` selects the exact
+`games_theory` release. The build packages that wheel and its pinned universal
+dependencies; it does not package a virtual environment. See the
+[Python runtime guide](python-runtime.md) for the complete build and runtime
+flow.
