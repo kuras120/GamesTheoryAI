@@ -15,7 +15,9 @@ repositories {
 }
 
 dependencies {
-    implementation "io.github.palexdev:materialfx:$MATERIALFX_VERSION"
+    implementation("io.github.mkpaz:atlantafx-base:$ATLANTAFX_VERSION") {
+        exclude group: 'org.openjfx'
+    }
     implementation "com.google.guava:guava:$GUAVA_VERSION"
     implementation "ch.qos.logback:logback-classic:$LOGBACK_VERSION"
 
