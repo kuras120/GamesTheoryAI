@@ -193,6 +193,20 @@ This layered strategy avoids replacing one all-in-one dependency with another:
 
 `JavaFX controls -> AtlantaFX theme (optional) -> ControlsFX/GemsFX controls (as needed)`
 
+## Accepted Outcome
+
+The application adopted AtlantaFX 2.1.0 on 2026-07-17 as the shared theme layer
+for an accepted visual refresh. MaterialFX and its only utility call were
+removed. Standard JavaFX controls remain the primary control boundary, while
+AtlantaFX supplies `PrimerLight`, `PrimerDark`, and the toggle switches used
+for theme and AI selection.
+
+Both games start in `PrimerLight`, switch themes without rebuilding their
+scenes, and share one theme-aware application stylesheet. The build excludes
+AtlantaFX's transitive OpenJFX dependency so the JavaFX 21.0.8 runtime baseline
+remains explicit. ControlsFX and GemsFX were not added because no accepted
+feature required their controls.
+
 ## Sources
 
 - [MaterialFX repository and documentation](https://github.com/palexdev/MaterialFX)

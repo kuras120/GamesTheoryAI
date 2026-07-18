@@ -32,6 +32,7 @@ here.
 | `build.gradle`, `libs.gradle`, `gradle.properties`, `settings.gradle`, `gradlew*`, `gradle/**` | Build, dependencies, Python wheel preparation, packaging, tests, coverage, and Gradle bootstrap. |
 | `config/**` | Build-time constraints and dependency configuration. |
 | `docs/domain/chess.md` | Implemented chess behavior. |
+| `docs/domain/application-presentation.md` | Shared appearance, theme selection, and presentation-state behavior. |
 | `docs/domain/tic-tac-toe.md` | Tic-tac-toe rules and player-facing behavior. |
 | `docs/domain/tic-tac-toe-ai.md` | AI behavior, move contract, validation, and availability. |
 | `docs/guidelines/repository-guide.md` | Environment, commands, testing, packaging, and release operation. |
@@ -48,11 +49,12 @@ here.
 | Task or touched area | Read before work |
 | --- | --- |
 | Any source, resource, build, or test change | `docs/guidelines/repository-guide.md` and `docs/guidelines/engineering-guide.md` |
-| Chess behavior, board interaction, controller, FXML, or styling | `docs/domain/chess.md` |
-| Tic-tac-toe rules, turns, scoring, reset, activity feed, controller, FXML, or styling | `docs/domain/tic-tac-toe.md` |
+| Chess behavior, board interaction, or controller | `docs/domain/chess.md` |
+| Tic-tac-toe rules, turns, scoring, reset, activity feed, or controller | `docs/domain/tic-tac-toe.md` |
 | Tic-tac-toe AI behavior, move flow, protocol, validation, availability, or feedback | `docs/domain/tic-tac-toe.md` and `docs/domain/tic-tac-toe-ai.md` |
 | Python discovery, wheelhouse, bootstrap, application data paths, or external process execution | `docs/domain/tic-tac-toe-ai.md` and `docs/guidelines/python-runtime.md` |
-| Shared utilities, cross-game behavior, or presentation infrastructure | Every affected domain document |
+| Shared appearance, theme behavior, FXML, styling, or presentation infrastructure | `docs/domain/application-presentation.md` and every affected game domain document |
+| Shared utilities or other cross-game behavior | Every affected domain document |
 | Setup, Gradle, dependencies, packaging, tests, scripts, or release operation | Relevant sections of `docs/guidelines/repository-guide.md`; for Python packaging also read `docs/guidelines/python-runtime.md` |
 | Tool selection or prior technical investigation | Relevant notes under `docs/research/**` |
 | Documentation, review, refactoring, or runtime-flow changes | `docs/guidelines/engineering-guide.md` plus the documents for every touched area |

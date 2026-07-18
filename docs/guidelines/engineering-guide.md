@@ -30,6 +30,26 @@ tested, and reviewed.
 - Preserve unrelated game functionality when an optional capability is
   unavailable.
 
+## JavaFX Presentation
+
+- Keep standard JavaFX controls as the default control boundary. Use AtlantaFX
+  as the shared theme layer and add library-specific controls only when they
+  satisfy a named interaction requirement.
+- Apply `PrimerLight` before loading a view. Map the runtime dark-mode choice
+  centrally to `PrimerLight` or `PrimerDark`; controllers must delegate theme
+  selection instead of constructing themes themselves.
+- Keep visual rules in the shared application stylesheet. Prefer semantic
+  style classes over inline Java or FXML styles.
+- Use AtlantaFX looked-up colors for theme-sensitive surfaces, borders, text,
+  focus, and selection states. Fixed colors are acceptable only for deliberate
+  identity such as the chessboard palette, and they must remain legible in both
+  themes.
+- Keep theme controls separate from game and integration services. Changing a
+  theme must not rebuild the scene or mutate game, score, activity, selection,
+  or AI state.
+- Verify light and dark appearance, keyboard focus, disabled controls, and
+  layout bounds when presentation code, FXML, CSS, or UI dependencies change.
+
 ## External Processes And Runtime Integration
 
 - Pass external commands as explicit argument lists and set bounded execution

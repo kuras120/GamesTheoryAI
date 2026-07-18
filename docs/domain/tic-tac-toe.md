@@ -19,3 +19,6 @@ coordinates shown to players use one-based row and column numbers.
 
 Reset starts a new game, clears the previous activity and score, and preserves
 AI availability and previously learned opponent data.
+
+The shared light and dark theme behavior is defined by the
+[application presentation contract](application-presentation.md).
