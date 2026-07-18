@@ -1,18 +1,22 @@
 # JavaFX UI library options
 
+Status: research snapshot
+
+Last reviewed: 2026-07-16
+
 ## Decision context
 
-Choose a sustainable JavaFX UI library strategy for the application, which
-currently builds with JDK 21 and JavaFX 21.0.8 and declares MaterialFX
-11.17.0.
+The evaluation considered a sustainable JavaFX UI library strategy for an
+application built with JDK 21 and JavaFX 21.0.8 that declared MaterialFX
+11.17.0 at the time.
 
-The current application does not use MaterialFX controls or themes. Its only
-MaterialFX API reference is `StringUtils.EMPTY` in `LinePredictor`. Replacing
-that value with the Java empty string would remove the dependency without a UI
-migration.
+At the time of evaluation, the application did not use MaterialFX controls or
+themes. Its only MaterialFX API reference was `StringUtils.EMPTY` in
+`LinePredictor`. Replacing that value with the Java empty string would remove
+the dependency without a UI migration.
 
-This research is a snapshot from 2026-07-16. GitHub stars, contributor counts,
-commit activity, releases, and licenses can change after that date.
+GitHub stars, contributor counts, commit activity, releases, and licenses can
+change after the review date.
 
 ## Method
 

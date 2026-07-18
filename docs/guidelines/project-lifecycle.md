@@ -1,11 +1,11 @@
-# Project lifecycle
+# Project Lifecycle
 
 Use this workflow for changes that are large enough to require architectural or
 product decisions before implementation.
 
-## 1. Project proposal
+## 1. Project Proposal
 
-Create one Markdown file under `docs/projects`. The proposal must describe:
+Create one Markdown project proposal. The proposal must describe:
 
 - the problem and intended outcome;
 - confirmed decisions and assumptions;
@@ -19,7 +19,7 @@ Create one Markdown file under `docs/projects`. The proposal must describe:
 The proposal has status `PROPOSED`. No production implementation starts during
 this stage.
 
-## 2. Proposal review
+## 2. Proposal Review
 
 The repository owner reviews the project file. Discussion and corrections are
 applied to the proposal itself so the accepted design is explicit.
@@ -31,7 +31,7 @@ Change its status to `APPROVED FOR IMPLEMENTATION` when approval is given.
 
 Implement only the accepted scope. Keep the project file during development and
 record material deviations or newly discovered risks in it. Do not update the
-permanent domain and guideline documentation yet.
+permanent documentation yet.
 
 Run verification proportionate to the change and prepare a concise review
 summary containing:
@@ -44,28 +44,27 @@ summary containing:
 
 Set the project status to `IMPLEMENTED`.
 
-## 4. Implementation review
+## 4. Implementation Review
 
 The repository owner reviews the implementation and its verification results.
 Requested changes return to the implementation stage.
 
-Do not finalize documentation or delete the project file until the repository
-owner explicitly accepts the implementation.
+Do not finalize permanent documentation or delete the project proposal until
+the repository owner explicitly accepts the implementation.
 
 Set the project status to `APPROVED FOR DOCUMENTATION`.
 
-## 5. Documentation and cleanup
+## 5. Documentation And Cleanup
 
 After implementation acceptance:
 
-1. update the relevant permanent documents under `docs/domain`,
-   `docs/guidelines` and `docs/architecture`;
-2. update `README.md` only if user-facing product or quick-start information
-   changed;
-3. update `AGENTS.md` if repository routing changed;
-4. remove the completed project file from `docs/projects`;
-5. run link, formatting, and relevant build checks;
-6. present the final diff for commit or publication approval.
+1. Update permanent documentation to match the accepted behavior and
+   decisions.
+2. Update visitor-facing documentation when product purpose or usage changed.
+3. Preserve reusable investigation outcomes as permanent research notes.
+4. Remove the completed project proposal.
+5. Run link, formatting, and relevant build checks.
+6. Present the final change set for commit or publication approval.
 
 The Git history preserves the reviewed plan while the working tree retains only
 current documentation.

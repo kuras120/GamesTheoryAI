@@ -5,9 +5,8 @@ behavior, and score calculation. Players receive points for completed rows,
 columns, and diagonals.
 
 When AI mode is enabled, the human plays `X` and the external Q-learning player
-plays `O`. The board is flattened row by row before being passed to the AI; `N`
-represents an empty cell. The returned coordinate uses `x` as the zero-based
-column and `y` as the zero-based row.
+plays `O`. Enabling the opponent does not change the board, turn, scoring, or
+reset rules.
 
 The opponent behavior and move contract are documented in the
 [tic-tac-toe AI domain](tic-tac-toe-ai.md).

@@ -1,69 +1,82 @@
-# Engineering guide
+# Engineering Guide
 
-Use these guidelines when designing or reviewing changes. `AGENTS.md` decides
-which guideline applies to a task; this file captures project-level rules that
-should not be scattered through implementation comments.
+This guide defines how GamesTheoryAI code should be designed, implemented,
+tested, and reviewed.
 
-## Design and documentation
+## Application Structure
 
-- Keep the root `README.md` short, visitor-oriented, and focused on product
-  purpose, contents, quick start, and the documentation entry point.
-- Describe implemented product behavior and external contracts in
-  `docs/domain`.
-- Keep domain documentation independent of implementation. Do not include
-  source maps, file paths, class names, frameworks, build tools, or repository
-  structure there; domain rules and contracts define the behavior that code
-  must follow.
-- Put mappings between domain concepts and their implementation in repository
-  or engineering guides, never in domain documents.
-- Keep operational repository information in the repository guide.
-- Put evaluated alternatives in `docs/research`; link the directory rather than
-  individual research files from `AGENTS.md`.
-- Use one file under `docs/projects` for each cohesive change that requires
-  design approval.
-- Update permanent domain and guideline documentation only after the related
-  implementation is accepted.
-
-## Change workflow
-
-Large changes follow the [project lifecycle](project-lifecycle.md): proposal,
-proposal acceptance, implementation, implementation acceptance, and only then
-permanent documentation plus project-file cleanup.
-
-A passing build is verification evidence, not product or design acceptance.
-Material deviations discovered during implementation are written back to the
-active project before review.
-
-## Implementation boundaries
-
-- Give each class, module, and build task one primary responsibility. Prefer
-  small collaborators composed by an orchestrator over a long class that mixes
-  discovery, process execution, parsing, hashing, and filesystem operations.
+- Give each class, module, and build task one primary responsibility.
+- Prefer small collaborators composed by an orchestrator over a class that
+  mixes discovery, process execution, parsing, hashing, and filesystem work.
 - Keep orchestrators focused on sequencing and mapping outcomes. Move detailed
-  work behind narrow interfaces or named methods that can be understood and
-  tested independently.
+  work behind narrow interfaces or intention-revealing methods.
+- Keep game rules and product behavior separate from JavaFX controllers,
+  external processes, and filesystem infrastructure.
+- Keep shared utilities free of chess- or tic-tac-toe-specific decisions.
 - Keep build task declarations focused on dependencies, inputs, outputs, and
-  high-level actions. Extract multi-step build logic into small, intention-
-  revealing helper methods.
-- Keep game rules and product behavior separate from external-process and
-  filesystem infrastructure.
-- Keep shared utilities free of tic-tac-toe- or chess-specific decisions.
-- Make external commands explicit argument lists with bounded execution time
-  and independently consumed output streams.
+  high-level actions. Extract multi-step build logic into small helper methods.
+- Inject infrastructure boundaries where replacement is needed for testing;
+  do not construct process and filesystem dependencies inside game logic.
+
+## JavaFX And Concurrency
+
+- Do not block the JavaFX application thread with filesystem, network, child-
+  process, dependency-installation, or other long-running work.
+- Publish UI state changes on the JavaFX application thread.
+- Keep presentation state in controllers or shared UI components and keep it
+  out of game rules and runtime-integration services.
+- Invalidate asynchronous results when the game state that produced their
+  input has been reset or replaced.
+- Preserve unrelated game functionality when an optional capability is
+  unavailable.
+
+## External Processes And Runtime Integration
+
+- Pass external commands as explicit argument lists and set bounded execution
+  times.
+- Consume standard output and standard error independently so neither stream
+  can block the process.
 - Reserve standard output for machine-readable process contracts and standard
   error for diagnostics.
-- Do not block the JavaFX application thread with filesystem, network, or child
-  process work. Publish UI changes on the JavaFX thread.
-- Prefer user-facing availability states for missing optional capabilities;
-  preserve unrelated game functionality.
+- Validate exit status, output shape, value ranges, and current application
+  state before applying an external result.
+- Keep mutable runtime data outside packaged resources and repository paths.
+- Make runtime preparation safe to repeat and safe under concurrent launches.
+- Expose missing optional runtimes as clear availability states instead of
+  failing unrelated application features.
 
-## Testing and review
+## Error Handling
 
-- Add unit tests for domain rules, parsing, validation, path selection, and
-  command construction where those behaviors change.
-- Make infrastructure boundaries replaceable in tests instead of invoking real
-  network services or platform runtimes.
-- Run checks proportionate to the change and report commands and results.
-- Record manual JavaFX and cross-platform checks that remain outstanding.
-- Keep implementation comments focused on local intent; durable architecture
-  and workflow decisions belong in documentation.
+- Preserve detailed technical diagnostics while presenting concise,
+  actionable messages to players.
+- Distinguish unavailable prerequisites, preparation failures, invalid process
+  results, and fatal runtime failures.
+- Restore a usable UI state after recoverable asynchronous or process errors.
+- Avoid catching exceptions without either handling the failed state or
+  preserving useful context for diagnosis.
+
+## Testing
+
+- Add unit tests when domain rules, parsing, validation, path selection,
+  command construction, state transitions, or failure handling change.
+- Replace process, filesystem, time, and runtime-discovery boundaries in tests
+  instead of relying on the host environment.
+- Cover malformed output, non-zero exits, timeouts, unavailable dependencies,
+  stale asynchronous results, and invalid moves where relevant.
+- Keep fixtures deterministic and independent of network services or local
+  platform runtimes.
+- Run checks proportionate to the change and record any outstanding manual
+  JavaFX or cross-platform verification.
+
+## Code Review Standard
+
+- Prioritize correctness, game-state integrity, UI-thread safety, process
+  lifecycle failures, persistence compatibility, and behavioral regressions.
+- Verify that responsibilities and side effects have clear ownership.
+- Confirm that asynchronous results cannot mutate stale or reset state.
+- Require tests for changed rules, parsing, validation, persistence, and
+  failure handling.
+- Check that abstractions reduce coupling without hiding domain behavior or
+  runtime contracts.
+- Avoid cosmetic feedback unless readability obscures behavior, safety, or
+  correctness.
