@@ -1,18 +1,22 @@
 # JavaFX UI library options
 
+Status: research snapshot
+
+Last reviewed: 2026-07-16
+
 ## Decision context
 
-Choose a sustainable JavaFX UI library strategy for the application, which
-currently builds with JDK 21 and JavaFX 21.0.8 and declares MaterialFX
-11.17.0.
+The evaluation considered a sustainable JavaFX UI library strategy for an
+application built with JDK 21 and JavaFX 21.0.8 that declared MaterialFX
+11.17.0 at the time.
 
-The current application does not use MaterialFX controls or themes. Its only
-MaterialFX API reference is `StringUtils.EMPTY` in `LinePredictor`. Replacing
-that value with the Java empty string would remove the dependency without a UI
-migration.
+At the time of evaluation, the application did not use MaterialFX controls or
+themes. Its only MaterialFX API reference was `StringUtils.EMPTY` in
+`LinePredictor`. Replacing that value with the Java empty string would remove
+the dependency without a UI migration.
 
-This research is a snapshot from 2026-07-16. GitHub stars, contributor counts,
-commit activity, releases, and licenses can change after that date.
+GitHub stars, contributor counts, commit activity, releases, and licenses can
+change after the review date.
 
 ## Method
 
@@ -188,6 +192,20 @@ larger compatibility and support risk than the current MaterialFX dependency.
 This layered strategy avoids replacing one all-in-one dependency with another:
 
 `JavaFX controls -> AtlantaFX theme (optional) -> ControlsFX/GemsFX controls (as needed)`
+
+## Accepted Outcome
+
+The application adopted AtlantaFX 2.1.0 on 2026-07-17 as the shared theme layer
+for an accepted visual refresh. MaterialFX and its only utility call were
+removed. Standard JavaFX controls remain the primary control boundary, while
+AtlantaFX supplies `PrimerLight`, `PrimerDark`, and the toggle switches used
+for theme and AI selection.
+
+Both games start in `PrimerLight`, switch themes without rebuilding their
+scenes, and share one theme-aware application stylesheet. The build excludes
+AtlantaFX's transitive OpenJFX dependency so the JavaFX 21.0.8 runtime baseline
+remains explicit. ControlsFX and GemsFX were not added because no accepted
+feature required their controls.
 
 ## Sources
 

@@ -1,6 +1,6 @@
 # Python backend delivery options
 
-Status: architecture research
+Status: research recommendation; not current runtime behavior
 
 Last reviewed: 2026-07-14
 
