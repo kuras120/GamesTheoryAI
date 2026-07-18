@@ -1,84 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
+<?import atlantafx.base.controls.ToggleSwitch?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.*?>
 
-<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-          fx:controller="com.games.theory.chess.Controller">
-    <rowConstraints>
-        <RowConstraints/>
-        <RowConstraints minHeight="10.0" prefHeight="50.0"/>
-    </rowConstraints>
-    <columnConstraints>
-        <ColumnConstraints minWidth="10.0" prefWidth="50.0"/>
-        <ColumnConstraints/>
-    </columnConstraints>
-    <GridPane fx:id="table" alignment="CENTER" gridLinesVisible="true" GridPane.columnIndex="1">
-      <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
-      </columnConstraints>
-      <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
-      </rowConstraints>
-    </GridPane>
-    <GridPane gridLinesVisible="true" GridPane.columnIndex="1" GridPane.rowIndex="1">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        </rowConstraints>
-        <TextField alignment="CENTER" disable="true" editable="false" text="A"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="B" GridPane.columnIndex="1"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="C" GridPane.columnIndex="2"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="D" GridPane.columnIndex="3"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="E" GridPane.columnIndex="4"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="F" GridPane.columnIndex="5"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="G" GridPane.columnIndex="6"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="H" GridPane.columnIndex="7"/>
-    </GridPane>
-    <GridPane gridLinesVisible="true">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="30.0"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES"/>
-        </rowConstraints>
-        <TextField alignment="CENTER" disable="true" editable="false" text="8"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="7" GridPane.rowIndex="1"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="6" GridPane.rowIndex="2"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="5" GridPane.rowIndex="3"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="4" GridPane.rowIndex="4"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="3" GridPane.rowIndex="5"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="2" GridPane.rowIndex="6"/>
-        <TextField alignment="CENTER" disable="true" editable="false" text="1" GridPane.rowIndex="7"/>
-    </GridPane>
-</GridPane>
+<BorderPane styleClass="app-root, chess-view" xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml" fx:controller="com.games.theory.chess.Controller">
+    <top>
+        <HBox alignment="CENTER_RIGHT" spacing="10.0" styleClass="top-bar">
+            <padding>
+                <Insets bottom="8.0" left="20.0" right="20.0" top="16.0"/>
+            </padding>
+            <ToggleSwitch fx:id="darkModeToggle" mnemonicParsing="false" text="Dark mode"/>
+        </HBox>
+    </top>
+    <center>
+        <GridPane alignment="CENTER" hgap="10.0" styleClass="chess-layout" vgap="10.0">
+            <rowConstraints>
+                <RowConstraints/>
+                <RowConstraints minHeight="10.0" prefHeight="50.0"/>
+            </rowConstraints>
+            <columnConstraints>
+                <ColumnConstraints minWidth="10.0" prefWidth="50.0"/>
+                <ColumnConstraints/>
+            </columnConstraints>
+
+            <GridPane fx:id="table" alignment="CENTER" gridLinesVisible="true" styleClass="game-board, chess-board"
+                      GridPane.columnIndex="1">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+            </GridPane>
+
+            <GridPane styleClass="coordinate-row" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                </columnConstraints>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="A"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="B"
+                       GridPane.columnIndex="1"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="C"
+                       GridPane.columnIndex="2"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="D"
+                       GridPane.columnIndex="3"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="E"
+                       GridPane.columnIndex="4"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="F"
+                       GridPane.columnIndex="5"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="G"
+                       GridPane.columnIndex="6"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="H"
+                       GridPane.columnIndex="7"/>
+            </GridPane>
+
+            <GridPane styleClass="coordinate-column">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="50.0"/>
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES"/>
+                </rowConstraints>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="8"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="7"
+                       GridPane.rowIndex="1"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="6"
+                       GridPane.rowIndex="2"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="5"
+                       GridPane.rowIndex="3"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="4"
+                       GridPane.rowIndex="4"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="3"
+                       GridPane.rowIndex="5"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="2"
+                       GridPane.rowIndex="6"/>
+                <Label alignment="CENTER" maxWidth="Infinity" styleClass="coordinate-label" text="1"
+                       GridPane.rowIndex="7"/>
+            </GridPane>
+        </GridPane>
+    </center>
+</BorderPane>

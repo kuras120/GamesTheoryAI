@@ -1,20 +1,17 @@
 package com.games.theory.tictactoe.integration;
 
+import atlantafx.base.controls.ToggleSwitch;
 import com.games.theory.tictactoe.GameActivityFeed;
 import com.games.theory.tictactoe.exception.AiException;
 import com.games.theory.tictactoe.exception.GameException;
 import com.games.theory.tictactoe.model.Node;
 import com.games.theory.tictactoe.processor.ProcessorExecutor;
 import javafx.application.Platform;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +22,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class IntegrationService {
     private final GridPane table;
-    private final CheckBox aiCheckbox;
+    private final ToggleSwitch aiCheckbox;
     private final Label aiStatusLabel;
     private final TextArea pointsField;
     private final PythonExecutor pythonExecutor;
@@ -86,6 +83,7 @@ public class IntegrationService {
 
     private void addPane(int rowIndex, int colIndex) {
         Pane pane = new StackPane();
+        pane.getStyleClass().add("game-cell");
         pane.setUserData(new Node(colIndex, rowIndex));
         pane.setOnMouseClicked(e -> {
             Node node = (Node) pane.getUserData();
@@ -101,7 +99,7 @@ public class IntegrationService {
         String mark = turn ? "X" : "O";
         String participant = participant(mark, aiMove);
         Text text = new Text(mark);
-        text.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 40));
+        text.getStyleClass().add("game-mark");
         aiMap[node.getRowIndex()][node.getColIndex()] = mark;
         node.setMarkName(mark);
         pane.getChildren().add(text);

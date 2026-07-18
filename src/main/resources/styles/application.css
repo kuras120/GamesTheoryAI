@@ -1,0 +1,129 @@
+.app-root {
+    -fx-background-color: -color-bg-default;
+    -fx-font-family: "System";
+}
+
+.top-bar {
+    -fx-background-color: -color-bg-subtle;
+    -fx-border-color: transparent transparent -color-border-default transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.chess-layout {
+    -fx-padding: 16 24 32 24;
+}
+
+.game-board {
+    -fx-background-color: -color-border-default;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+
+.chess-board {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.24), 18, 0.12, 0, 5);
+}
+
+.chess-square {
+    -fx-border-color: rgba(0, 0, 0, 0.10);
+    -fx-border-width: 1;
+}
+
+.chess-square.light-square {
+    -fx-background-color: #f0d9b5;
+}
+
+.chess-square.dark-square {
+    -fx-background-color: #8f5f3f;
+}
+
+.chess-square.selected-square {
+    -fx-border-color: -color-accent-emphasis;
+    -fx-border-insets: 2;
+    -fx-border-radius: 3;
+    -fx-border-width: 4;
+}
+
+.chess-piece {
+    -fx-font-family: "Arial";
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-stroke-width: 0.8;
+}
+
+.chess-piece.white-piece {
+    -fx-fill: white;
+    -fx-stroke: #202020;
+}
+
+.chess-piece.black-piece {
+    -fx-fill: #181818;
+    -fx-stroke: white;
+}
+
+.coordinate-label {
+    -fx-font-weight: bold;
+    -fx-padding: 8 4;
+    -fx-text-fill: -color-fg-muted;
+}
+
+.tic-tac-toe-view {
+    -fx-padding: 20;
+}
+
+.tic-tac-toe-board {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 16, 0.10, 0, 4);
+}
+
+.game-cell {
+    -fx-background-color: -color-bg-default;
+    -fx-border-color: -color-border-default;
+    -fx-border-width: 0.5;
+}
+
+.game-cell:hover {
+    -fx-background-color: -color-neutral-muted;
+}
+
+.game-mark {
+    -fx-fill: -color-accent-emphasis;
+    -fx-font-family: "Arial";
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+}
+
+.winning-line {
+    -fx-stroke: -color-fg-default;
+    -fx-stroke-line-cap: round;
+    -fx-stroke-width: 4;
+}
+
+.side-panel {
+    -fx-background-color: -color-bg-subtle;
+    -fx-background-radius: 8;
+    -fx-border-color: -color-border-default;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-padding: 16;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -color-fg-default;
+}
+
+.activity-feed,
+.score-display {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+.score-display {
+    -fx-font-family: monospace;
+    -fx-font-weight: bold;
+}
+
+.reset-button {
+    -fx-font-weight: bold;
+}

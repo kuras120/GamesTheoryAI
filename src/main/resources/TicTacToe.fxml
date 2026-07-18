@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import atlantafx.base.controls.ToggleSwitch?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.layout.*?>
 
-<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/10.0.2-internal"
+<GridPane alignment="center" hgap="16" styleClass="app-root, tic-tac-toe-view" vgap="10"
+          xmlns="http://javafx.com/javafx"
           xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.games.theory.tictactoe.Controller">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
@@ -18,7 +20,8 @@
         <ColumnConstraints hgrow="ALWAYS" minWidth="360.0" prefWidth="500.0"/>
     </columnConstraints>
 
-    <GridPane fx:id="table" alignment="CENTER" gridLinesVisible="true">
+    <GridPane fx:id="table" alignment="CENTER" gridLinesVisible="true"
+              styleClass="game-board, tic-tac-toe-board">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
@@ -40,18 +43,23 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
         </columnConstraints>
         <Button maxHeight="Infinity" maxWidth="Infinity" mnemonicParsing="false" onAction="#resetGame"
-                text="Reset" GridPane.columnIndex="2"/>
+                styleClass="accent, reset-button" text="Reset" GridPane.columnIndex="2"/>
     </GridPane>
 
-    <VBox fillWidth="true" prefWidth="500.0" spacing="10.0" GridPane.columnIndex="1" GridPane.rowSpan="2">
+    <VBox fillWidth="true" prefWidth="500.0" spacing="12.0" styleClass="side-panel"
+          GridPane.columnIndex="1" GridPane.rowSpan="2">
+        <HBox alignment="CENTER_RIGHT" minHeight="40.0">
+            <ToggleSwitch fx:id="darkModeToggle" mnemonicParsing="false" text="Dark mode"/>
+        </HBox>
         <HBox alignment="CENTER_RIGHT" minHeight="50.0" spacing="10.0">
             <Label fx:id="aiStatusLabel" maxWidth="260.0" text="Preparing AI…" textAlignment="RIGHT"
                    wrapText="true"/>
-            <CheckBox fx:id="aiCheckbox" disable="true" mnemonicParsing="false" text="AI"/>
+            <ToggleSwitch fx:id="aiCheckbox" disable="true" mnemonicParsing="false" text="AI"/>
         </HBox>
-        <Label alignment="CENTER_LEFT" maxWidth="Infinity" text="Game activity"/>
-        <ListView fx:id="activityFeed" maxWidth="Infinity" prefHeight="500.0" VBox.vgrow="ALWAYS"/>
-        <TextArea fx:id="pointsField" disable="true" maxHeight="70.0" maxWidth="Infinity" minHeight="70.0"
-                  prefHeight="70.0"/>
+        <Label alignment="CENTER_LEFT" maxWidth="Infinity" styleClass="section-title" text="Game activity"/>
+        <ListView fx:id="activityFeed" maxWidth="Infinity" prefHeight="500.0" styleClass="activity-feed"
+                  VBox.vgrow="ALWAYS"/>
+        <TextArea fx:id="pointsField" editable="false" focusTraversable="false" maxHeight="76.0"
+                  maxWidth="Infinity" minHeight="76.0" prefHeight="76.0" styleClass="score-display"/>
     </VBox>
 </GridPane>

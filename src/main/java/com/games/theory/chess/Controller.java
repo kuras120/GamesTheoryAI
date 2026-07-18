@@ -1,7 +1,9 @@
 package com.games.theory.chess;
 
+import atlantafx.base.controls.ToggleSwitch;
 import com.games.theory.chess.model.Chessman;
 import com.games.theory.chess.model.Node;
+import com.games.theory.ui.ThemeManager;
 import com.games.theory.utils.DataReaderUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -9,10 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,8 +22,10 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
 
     @FXML private GridPane table;
+    @FXML private ToggleSwitch darkModeToggle;
 
     private static final String SQUARE = "square";
+    private static final String SELECTED_SQUARE = "selected-square";
 
     private Map<String, String> state;
     private Map<String, String> names;
@@ -33,6 +33,9 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        darkModeToggle.selectedProperty().addListener(
+            (observable, previous, selected) -> ThemeManager.apply(selected)
+        );
         state = DataReaderUtils.readModel("data/DefaultState.data");
         names = DataReaderUtils.readModel("data/Names.data");
 
@@ -62,7 +65,7 @@ public class Controller implements Initializable {
                 checkedNode = (javafx.scene.Node) e.getSource();
                 log.info("Mouse clicked cell [{}, {}]\n", colIndex, rowIndex);
                 background = (Pane) ((Node) checkedNode.getUserData()).getBackgroundNode(table, SQUARE, colIndex, rowIndex);
-                background.setStyle(background.getStyle() + "-fx-border-color: chocolate;");
+                background.getStyleClass().add(SELECTED_SQUARE);
                 if (((Node) checkedNode.getUserData()).getChessman() != null) {
                     log.info(
                         "{} - {}",
@@ -76,7 +79,7 @@ public class Controller implements Initializable {
             }
             else {
                 background = (Pane) ((Node) checkedNode.getUserData()).getBackgroundNode(table, SQUARE, null, null);
-                background.setStyle(background.getStyle().replace("-fx-border-color: chocolate;", ""));
+                background.getStyleClass().remove(SELECTED_SQUARE);
                 if (checkedNode != e.getSource()) {
                     Chessman swap = ((Node) ((Pane) e.getSource()).getUserData()).getChessman();
                     ((Node) ((Pane) e.getSource()).getUserData()).setChessman(((Node) checkedNode.getUserData()).getChessman());
@@ -91,10 +94,11 @@ public class Controller implements Initializable {
 
         Pane square = new StackPane();
 
-        square.getStyleClass().add(SQUARE);
-        square.setStyle(square.getStyle() + "-fx-border-width: 3px;");
-        if ((colIndex + rowIndex) % 2 == 0) square.setStyle(square.getStyle() + "-fx-background-color: sandybrown;");
-        else square.setStyle(square.getStyle() + "-fx-background-color: saddlebrown;");
+        square.getStyleClass().addAll(
+            SQUARE,
+            "chess-square",
+            (colIndex + rowIndex) % 2 == 0 ? "light-square" : "dark-square"
+        );
 
         table.add(square, colIndex, rowIndex);
         table.add(pane, colIndex, rowIndex);
@@ -112,14 +116,12 @@ public class Controller implements Initializable {
             chessman = new Chessman(name, code[1], chessmanCode);
 
             text.setText(name);
-            text.setFont(Font.font("Arial", FontWeight.BOLD, FontPosture.REGULAR, 20));
+            text.getStyleClass().add("chess-piece");
             if ("W".equals(code[1])) {
-                text.setFill(Color.WHITE);
-                text.setStyle(text.getStyle() + "-fx-stroke: black;");
+                text.getStyleClass().add("white-piece");
             }
             else if ("B".equals(code[1])) {
-                text.setFill(Color.BLACK);
-                text.setStyle(text.getStyle() + "-fx-stroke: white;");
+                text.getStyleClass().add("black-piece");
             }
 
             movable.getChildren().add(text);

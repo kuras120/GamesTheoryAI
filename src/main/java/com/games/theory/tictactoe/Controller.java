@@ -1,5 +1,6 @@
 package com.games.theory.tictactoe;
 
+import atlantafx.base.controls.ToggleSwitch;
 import com.games.theory.tictactoe.integration.IntegrationService;
 import com.games.theory.tictactoe.integration.PythonExecutor;
 import com.games.theory.tictactoe.integration.PythonRuntimeManager;
@@ -8,10 +9,10 @@ import com.games.theory.tictactoe.processor.ColumnProcessor;
 import com.games.theory.tictactoe.processor.DiagonalProcessor;
 import com.games.theory.tictactoe.processor.ProcessorExecutor;
 import com.games.theory.tictactoe.processor.RowProcessor;
+import com.games.theory.ui.ThemeManager;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
@@ -26,7 +27,8 @@ import java.util.ResourceBundle;
 @Slf4j
 public class Controller implements Initializable {
     @FXML private GridPane table;
-    @FXML private CheckBox aiCheckbox;
+    @FXML private ToggleSwitch aiCheckbox;
+    @FXML private ToggleSwitch darkModeToggle;
     @FXML private Label aiStatusLabel;
     @FXML private ListView<String> activityFeed;
     @FXML private TextArea pointsField;
@@ -35,6 +37,9 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        darkModeToggle.selectedProperty().addListener(
+            (observable, previous, selected) -> ThemeManager.apply(selected)
+        );
         activityFeed.getItems().addListener((ListChangeListener<String>) change -> {
             if (!activityFeed.getItems().isEmpty()) {
                 activityFeed.scrollTo(activityFeed.getItems().size() - 1);
