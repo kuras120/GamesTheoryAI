@@ -11,6 +11,18 @@ reset rules.
 The opponent behavior and move contract are documented in the
 [tic-tac-toe AI domain](tic-tac-toe-ai.md).
 
+## Scoring And Winning Lines
+
+The game evaluates three-cell rows, columns, and diagonals. Each newly scored
+sequence awards one point and is checked only once. Four equal marks in one
+direction contain two overlapping three-cell sequences and therefore award two
+points.
+
+Each awarded sequence is shown as one continuous line between the centers of
+its first and last cells. Winning lines remain above marks and cell hover
+states, do not consume pointer input, stay aligned when the board is resized,
+and remain visible until reset.
+
 ## Game activity
 
 The game presents a chronological activity feed containing player and AI

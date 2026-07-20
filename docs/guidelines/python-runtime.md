@@ -9,7 +9,7 @@ remain defined by the [tic-tac-toe AI domain](../domain/tic-tac-toe-ai.md).
 - Build-time dependency preparation requires Python 3.9 or newer with `pip`.
 - Runtime bootstrap requires Python 3.9 or newer with `venv` support.
 - `GAME_THEORY_VERSION` in `gradle.properties` selects an explicit GitHub
-  release of `kuras120/NeuralNetworks`; the current version is `0.0.3`.
+  release of `kuras120/NeuralNetworks`; the current version is `0.0.4`.
 - `PYTHON_COMMAND` may override the Python command used by Gradle when the
   default platform command is unsuitable.
 - CI uses Python 3.9 so the minimum supported version is exercised during
@@ -17,15 +17,20 @@ remain defined by the [tic-tac-toe AI domain](../domain/tic-tac-toe-ai.md).
 
 ## Build-Time Wheelhouse
 
-`libs.gradle` downloads the selected `games_theory` wheel under its published
-filename. It then uses `pip download` and
-`config/python-wheelhouse-constraints.txt` to collect the complete dependency
-graph.
+`libs.gradle` resolves the exact universal `games_theory` wheel and hashed
+requirements lock published by the selected GitHub release. Release-provided
+asset digests are verified when available. Gradle then uses `pip download` in
+hash-checking mode to collect the release-owned dependency set and adds the
+application wheel to the same generated wheelhouse. The repository does not
+maintain a second constraints file or duplicate the lock's dependency
+versions.
 
 The prepared wheelhouse must contain only platform-independent wheels. The
 build generates `wheelhouse-manifest.txt` with the exact installation
 requirement, every wheel filename, and its SHA-256 hash. Gradle adds this
 generated directory to application resources for regular and Shadow JARs.
+The manifest protects the extracted runtime copy and identifies wheelhouse
+content changes; it is not a dependency-resolution source.
 
 The build does not create or package a virtual environment. A dependency that
 requires a platform-specific wheel needs a separate packaging design before it

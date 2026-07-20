@@ -20,21 +20,25 @@
         <ColumnConstraints hgrow="ALWAYS" minWidth="360.0" prefWidth="500.0"/>
     </columnConstraints>
 
-    <GridPane fx:id="table" alignment="CENTER" gridLinesVisible="true"
-              styleClass="game-board, tic-tac-toe-board">
-        <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
-        </columnConstraints>
-        <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES"/>
-        </rowConstraints>
-    </GridPane>
+    <StackPane>
+        <GridPane fx:id="table" alignment="CENTER" gridLinesVisible="true"
+                  styleClass="game-board, tic-tac-toe-board">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES"/>
+                <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+        </GridPane>
+        <Pane fx:id="winningLineOverlay" maxHeight="Infinity" maxWidth="Infinity"
+              mouseTransparent="true" styleClass="winning-line-overlay"/>
+    </StackPane>
 
     <GridPane GridPane.rowIndex="1">
         <columnConstraints>
