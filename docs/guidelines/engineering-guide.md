@@ -17,6 +17,10 @@ tested, and reviewed.
   high-level actions. Extract multi-step build logic into small helper methods.
 - Inject infrastructure boundaries where replacement is needed for testing;
   do not construct process and filesystem dependencies inside game logic.
+- Use Lombok for mechanical Java boilerplate such as constructors for injected
+  final collaborators, accessors, logging fields, and utility-class structure.
+  Keep explicit code when construction performs validation or setup, or when
+  generated behavior would hide ownership, mutation, or domain semantics.
 
 ## JavaFX And Concurrency
 

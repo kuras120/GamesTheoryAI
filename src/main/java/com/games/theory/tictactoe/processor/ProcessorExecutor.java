@@ -1,8 +1,10 @@
 package com.games.theory.tictactoe.processor;
 
-import javafx.scene.Node;
-import javafx.scene.layout.StackPane;
+import com.games.theory.tictactoe.model.GameCell;
+import com.games.theory.tictactoe.model.ScoringResult;
+import com.games.theory.tictactoe.model.WinningSequence;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -20,21 +22,26 @@ public class ProcessorExecutor {
     return this;
   }
 
-  public ProcessorExecutor execute(List<Node> tableList) {
-    for (Node node : tableList) {
-      if (node instanceof StackPane stackPane) {
-        processors.forEach(processor -> processor.process(stackPane));
-      }
+  public ProcessorExecutor execute(List<GameCell> cells) {
+    for (GameCell cell : cells) {
+      processors.forEach(processor -> processor.process(cell));
     }
     return this;
   }
 
-  public Map<String, Integer> collect() {
+  public ScoringResult collect() {
     Map<String, Integer> sumRoundPoints = processors.stream()
         .map(Processor::getPoints)
         .flatMap(m -> m.entrySet().stream())
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Integer::sum));
+    List<WinningSequence> winningSequences = processors.stream()
+        .map(Processor::getWinningSequences)
+        .collect(ArrayList::new, List::addAll, List::addAll);
     processors.forEach(Processor::reset);
-    return sumRoundPoints;
+    return new ScoringResult(sumRoundPoints, winningSequences);
+  }
+
+  public void reset() {
+    processors.forEach(Processor::reset);
   }
 }

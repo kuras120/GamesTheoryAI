@@ -21,6 +21,7 @@ here.
 
 | Path | Responsibility |
 | --- | --- |
+| `README.md` | Short human-facing project purpose, maturity, documentation links, and quick start. |
 | `src/main/java/com/games/theory/GUI.java` | Runtime entry point and game selection. |
 | `src/main/java/com/games/theory/chess/**` | Chess application, controller, and board model. |
 | `src/main/java/com/games/theory/tictactoe/**` | Tic-tac-toe UI, game rules, scoring, activity, storage, and AI integration. |
