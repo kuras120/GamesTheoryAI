@@ -39,7 +39,9 @@ public class PythonExecutor {
         command.add(runtime.applicationDataDirectory().toString());
         command.add(pointsX);
         command.add(pointsO);
-        Arrays.stream(aiMap).map(mark -> mark == null ? "N" : mark).forEach(command::add);
+        Arrays.stream(aiMap)
+            .map(mark -> mark == null || mark.isEmpty() ? "N" : mark)
+            .forEach(command::add);
         log.debug("Executing AI command: {}", command);
 
         try {

@@ -92,6 +92,10 @@
     -fx-font-weight: bold;
 }
 
+.winning-line-overlay {
+    -fx-background-color: transparent;
+}
+
 .winning-line {
     -fx-stroke: -color-fg-default;
     -fx-stroke-line-cap: round;

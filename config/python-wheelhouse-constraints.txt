@@ -1,5 +1,0 @@
-# games-theory 0.0.3 depends on jsbeautifier >= 1.14.0.
-jsbeautifier==1.15.4
-# jsbeautifier depends on editorconfig >= 0.12.2 and six >= 1.13.0.
-editorconfig==0.17.1
-six==1.17.0

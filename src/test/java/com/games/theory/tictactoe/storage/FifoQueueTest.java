@@ -1,64 +1,53 @@
 package com.games.theory.tictactoe.storage;
 
-import javafx.scene.layout.StackPane;
+import com.games.theory.tictactoe.model.GameCell;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import com.games.theory.tictactoe.model.Node;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FifoQueueTest {
   private static final int SIZE = 3;
-  private static final IFifoQueue FIFO_QUEUE = new FifoQueue(SIZE);
+  private final IFifoQueue fifoQueue = new FifoQueue(SIZE);
 
   @AfterEach
   void afterEach() {
-    FIFO_QUEUE.clear();
+    fifoQueue.clear();
   }
 
   @Test
-  void fifoIsFullCheck() {
-    FIFO_QUEUE.addFirst(createPane(0, 1, "Y"));
-    FIFO_QUEUE.addFirst(createPane(1, 0, "X"));
-    assertFalse(FIFO_QUEUE.isFull(), "Not full fifo after adding 2nd item");
-    FIFO_QUEUE.addFirst(createPane(0, 2, "X"));
-    assertTrue(FIFO_QUEUE.isFull(), "Full fifo after adding 3rd item");
-    FIFO_QUEUE.addFirst(createPane(0, 3, "X"));
-    assertTrue(FIFO_QUEUE.isFull(), "Full fifo after adding 4th item");
-    FIFO_QUEUE.clear();
-    assertFalse(FIFO_QUEUE.isFull(), "Empty fifo");
+  void reportsCapacity() {
+    fifoQueue.addFirst(cell(0, 1, "Y"));
+    fifoQueue.addFirst(cell(1, 0, "X"));
+    assertFalse(fifoQueue.isFull());
+    fifoQueue.addFirst(cell(0, 2, "X"));
+    assertTrue(fifoQueue.isFull());
   }
 
   @Test
-  void fifoElementsWithDifferentMarks() {
-    FIFO_QUEUE.addFirst(createPane(0, 1, "Y"));
-    FIFO_QUEUE.addFirst(createPane(1, 0, "X"));
-    FIFO_QUEUE.addFirst(createPane(0, 2, "X"));
-    assertNull(FIFO_QUEUE.isAllEqual(), "Doesn't find a match on different marks");
-
+  void ignoresDifferentMarks() {
+    fifoQueue.addFirst(cell(0, 1, "Y"));
+    fifoQueue.addFirst(cell(1, 0, "X"));
+    fifoQueue.addFirst(cell(0, 2, "X"));
+    assertNull(fifoQueue.findNewWinningSequence());
   }
 
   @Test
-  void fifoElementsInCorrectColumnOrder() {
-    FIFO_QUEUE.addFirst(createPane(0, 1, "X"));
-    FIFO_QUEUE.addFirst(createPane(0, 2, "X"));
-    FIFO_QUEUE.addFirst(createPane(0, 3, "X"));
-    assertNotNull(FIFO_QUEUE.isAllEqual(), "Finds a match");
+  void returnsCoordinatesForANewMatchOnlyOnce() {
+    fifoQueue.addFirst(cell(0, 1, "X"));
+    fifoQueue.addFirst(cell(0, 2, "X"));
+    fifoQueue.addFirst(cell(0, 3, "X"));
+
+    assertNotNull(fifoQueue.findNewWinningSequence());
+    assertNull(fifoQueue.findNewWinningSequence());
   }
 
-  @Test
-  void fifoElementsNotInCorrectOrder() {
-    FIFO_QUEUE.addFirst(createPane(1, 0, "X"));
-    FIFO_QUEUE.addFirst(createPane(0, 2, "X"));
-    FIFO_QUEUE.addFirst(createPane(2, 0, "X"));
-    assertThrows(IllegalStateException.class, FIFO_QUEUE::isAllEqual, "Throws an error");
-  }
-
-  private javafx.scene.Node createPane(int colIndex, int rowIndex, String mark) {
-    StackPane pane = new StackPane();
-    Node node = new Node(colIndex, rowIndex);
-    node.setMarkName(mark);
-    pane.setUserData(node);
-    return pane;
+  private GameCell cell(int column, int row, String mark) {
+    GameCell cell = new GameCell(column, row);
+    cell.place(mark);
+    return cell;
   }
 }

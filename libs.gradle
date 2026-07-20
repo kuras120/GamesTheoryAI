@@ -4,15 +4,33 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.zip.ZipFile
 
-def resolveWheelAsset(String version) {
+def resolveReleaseAssets(String version) {
     def encodedVersion = URLEncoder.encode(version, StandardCharsets.UTF_8)
     def apiUrl = "https://api.github.com/repos/kuras120/NeuralNetworks/releases/tags/${encodedVersion}"
     def release = new JsonSlurper().parseText(new URL(apiUrl).text)
-    def asset = release.assets.find { it.name.endsWith('.whl') }
-    if (asset == null) {
-        throw new GradleException("No .whl asset found in release ${version}")
+    def expectedWheel = "games_theory-${version}-py3-none-any.whl"
+    def expectedLock = "games-theory-${version}-requirements.lock"
+    def wheels = release.assets.findAll { it.name == expectedWheel }
+    def locks = release.assets.findAll { it.name == expectedLock }
+    if (wheels.size() != 1) {
+        throw new GradleException(
+            "Expected exactly one ${expectedWheel} asset in release ${version}, found ${wheels.size()}"
+        )
     }
-    [tag: release.tag_name, name: asset.name, url: asset.browser_download_url]
+    if (locks.size() != 1) {
+        throw new GradleException(
+            "Expected exactly one ${expectedLock} asset in release ${version}, found ${locks.size()}"
+        )
+    }
+    [
+        tag: release.tag_name,
+        wheel: releaseAsset(wheels.first()),
+        lock: releaseAsset(locks.first())
+    ]
+}
+
+def releaseAsset(Map asset) {
+    [name: asset.name, url: asset.browser_download_url, digest: asset.digest]
 }
 
 def requireSingleWheel(Project project, File directory) {
@@ -23,11 +41,19 @@ def requireSingleWheel(Project project, File directory) {
     wheels.first()
 }
 
-def downloadWheelDependencies(
+def requireSingleLock(Project project, File directory, String version) {
+    def expectedName = "games-theory-${version}-requirements.lock"
+    def locks = project.fileTree(directory) { include expectedName }.files
+    if (locks.size() != 1) {
+        throw new GradleException("Expected exactly one ${expectedName}, found ${locks.size()}")
+    }
+    locks.first()
+}
+
+def downloadLockedDependencies(
     Project project,
     List<String> pythonCommand,
-    File applicationWheel,
-    File constraintsFile,
+    File lockFile,
     File wheelhouseDirectory
 ) {
     project.delete wheelhouseDirectory
@@ -37,11 +63,25 @@ def downloadWheelDependencies(
         '-m', 'pip', 'download',
         '--disable-pip-version-check',
         '--only-binary=:all:',
-        '--constraint', constraintsFile.absolutePath,
+        '--require-hashes',
+        '--requirement', lockFile.absolutePath,
         '--dest', wheelhouseDirectory.absolutePath,
-        applicationWheel.absolutePath
     ])
     project.exec { commandLine command }
+}
+
+def verifyPublishedDigest(File file, Map asset) {
+    if (asset.digest == null || asset.digest.toString().isBlank()) {
+        return
+    }
+    def parts = asset.digest.toString().split(':', 2)
+    if (parts.size() != 2 || parts[0] != 'sha256') {
+        throw new GradleException("Unsupported release digest for ${asset.name}: ${asset.digest}")
+    }
+    def actual = sha256(file)
+    if (actual != parts[1]) {
+        throw new GradleException("Release digest mismatch for ${asset.name}")
+    }
 }
 
 def requireUniversalWheels(Project project, File wheelhouseDirectory) {
@@ -117,29 +157,46 @@ def pythonCommand = providers.gradleProperty('PYTHON_COMMAND')
 def downloadedWheelDirectory = layout.buildDirectory.dir('python-distribution').get().asFile
 def generatedResourceDirectory = layout.buildDirectory.dir('generated-resources').get().asFile
 def wheelhouseDirectory = new File(generatedResourceDirectory, 'python-wheelhouse')
-def constraintsFile = file('config/python-wheelhouse-constraints.txt')
+def releaseAssetsForDownload
 
 tasks.register('downloadGameTheoryRelease', Download) {
+    inputs.property('gameTheoryVersion', gameTheoryVersion)
+    outputs.dir downloadedWheelDirectory
     doFirst {
         delete downloadedWheelDirectory
         downloadedWheelDirectory.mkdirs()
-        def asset = resolveWheelAsset(gameTheoryVersion)
-        src asset.url
-        dest new File(downloadedWheelDirectory, asset.name)
-        println "Downloading games_theory release ${asset.tag}: ${asset.name}"
+        releaseAssetsForDownload = resolveReleaseAssets(gameTheoryVersion)
+        src([
+            releaseAssetsForDownload.wheel.url,
+            releaseAssetsForDownload.lock.url
+        ])
+        dest downloadedWheelDirectory
+        println(
+            "Downloading games_theory release ${releaseAssetsForDownload.tag}: "
+                + "${releaseAssetsForDownload.wheel.name}, ${releaseAssetsForDownload.lock.name}"
+        )
+    }
+    doLast {
+        [releaseAssetsForDownload.wheel, releaseAssetsForDownload.lock].each { asset ->
+            verifyPublishedDigest(new File(downloadedWheelDirectory, asset.name), asset)
+        }
     }
     overwrite true
 }
 
 tasks.register('preparePythonWheelhouse') {
     dependsOn downloadGameTheoryRelease
-    inputs.file constraintsFile
     inputs.dir downloadedWheelDirectory
     outputs.dir wheelhouseDirectory
 
     doLast {
         def applicationWheel = requireSingleWheel(project, downloadedWheelDirectory)
-        downloadWheelDependencies(project, pythonCommand, applicationWheel, constraintsFile, wheelhouseDirectory)
+        def lockFile = requireSingleLock(project, downloadedWheelDirectory, gameTheoryVersion)
+        downloadLockedDependencies(project, pythonCommand, lockFile, wheelhouseDirectory)
+        project.copy {
+            from applicationWheel
+            into wheelhouseDirectory
+        }
         def wheels = requireUniversalWheels(project, wheelhouseDirectory)
         writeWheelhouseManifest(wheelhouseDirectory, wheels, readPackageCoordinates(wheels))
     }
