@@ -39,13 +39,13 @@ application-framework libraries are outside the comparison.
 
 ## Quantitative comparison
 
-| Library | Scope | Stars | Contributors | Latest stable release | Stable releases, 12 / 24 months | Default-branch commits, 12 months | License |
-| --- | --- | ---: | ---: | --- | ---: | ---: | --- |
-| [MaterialFX](https://github.com/palexdev/MaterialFX) | Material-styled replacement controls and utilities | 1,428 | 15 | `11.17.0`, 2023-11-13 | 0 / 0 | 0 | LGPL-3.0 |
-| [AtlantaFX](https://github.com/mkpaz/atlantafx) | Modern CSS themes for standard controls, plus a small set of controls | 1,375 | 9 | `2.1.0`, 2025-07-11 | 0 / 1 | 17 | MIT |
-| [ControlsFX](https://github.com/controlsfx/controlsfx) | Mature supplementary controls and APIs | 1,701 | 182 | `11.2.3`, 2025-12-09 | 1 / 2 | 7 | BSD-3-Clause |
-| [GemsFX](https://github.com/dlsc-software-consulting-gmbh/GemsFX) | Broad modern controls and utilities | 618 | 22 | `4.3.0`, 2026-07-15 | 44 / 105 | 290 | Apache-2.0 |
-| [JFoenix](https://github.com/sshahine/JFoenix) | Material Design replacement controls | 6,330 | 81 | `9.0.10`, 2020-06-04 | 0 / 0 | 0 | MIT |
+| Library                                                           | Scope                                                                 | Stars | Contributors | Latest stable release | Stable releases, 12 / 24 months | Default-branch commits, 12 months | License      |
+|-------------------------------------------------------------------|-----------------------------------------------------------------------|------:|-------------:|-----------------------|--------------------------------:|----------------------------------:|--------------|
+| [MaterialFX](https://github.com/palexdev/MaterialFX)              | Material-styled replacement controls and utilities                    | 1,428 |           15 | `11.17.0`, 2023-11-13 |                           0 / 0 |                                 0 | LGPL-3.0     |
+| [AtlantaFX](https://github.com/mkpaz/atlantafx)                   | Modern CSS themes for standard controls, plus a small set of controls | 1,375 |            9 | `2.1.0`, 2025-07-11   |                           0 / 1 |                                17 | MIT          |
+| [ControlsFX](https://github.com/controlsfx/controlsfx)            | Mature supplementary controls and APIs                                | 1,701 |          182 | `11.2.3`, 2025-12-09  |                           1 / 2 |                                 7 | BSD-3-Clause |
+| [GemsFX](https://github.com/dlsc-software-consulting-gmbh/GemsFX) | Broad modern controls and utilities                                   |   618 |           22 | `4.3.0`, 2026-07-15   |                        44 / 105 |                               290 | Apache-2.0   |
+| [JFoenix](https://github.com/sshahine/JFoenix)                    | Material Design replacement controls                                  | 6,330 |           81 | `9.0.10`, 2020-06-04  |                           0 / 0 |                                 0 | MIT          |
 
 The zero in AtlantaFX's trailing 12-month release column is a boundary effect:
 version 2.1.0 was released five days before the 12-month cutoff. It is still
