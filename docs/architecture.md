@@ -65,7 +65,7 @@ Build-time wheel preparation accesses GitHub and the Python package index.
 | `GAME_THEORY_VERSION` in `gradle.properties` | Pin the backend release (currently `0.0.3`). |
 | `-PPYTHON_COMMAND=python3` | Override Gradle's Python command; runtime discovery is separate. |
 | `config/python-wheelhouse-constraints.txt` | Pin backend dependency constraints. |
-| `.github/workflows/build-workflow.yml` | Build on Ubuntu with JDK 21 and Python 3.9; upload coverage. |
+| `.github/workflows/build-workflow.yml` | Build on `ubuntu-latest` with JDK 21 and Python 3.14; upload coverage. Python 3.9 remains the runtime minimum, but CI does not exercise it. |
 
 Keep tests deterministic by replacing process, filesystem, time, and discovery
 boundaries as needed. Changes to rules, parsing, persistence, paths, command
