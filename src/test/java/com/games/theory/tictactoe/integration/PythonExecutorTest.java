@@ -39,7 +39,7 @@ class PythonExecutorTest {
         RecordingRunner runner = new RecordingRunner(new CommandResult(0, "{\"x\": 1, \"y\": 2}", "diagnostic"));
         PythonRuntime runtime = runtime();
 
-        AiMove move = new PythonExecutor(runner).processState(runtime, "4", "2", "X", null, "O");
+        AiMove move = new PythonExecutor(runner).processState(runtime, "4", "2", "X", "", "O");
 
         assertEquals(new AiMove(1, 2), move);
         assertEquals(List.of(
