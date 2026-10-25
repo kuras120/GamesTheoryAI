@@ -350,20 +350,6 @@ bootstrap proof of concept first. It is the shortest route to a user experience
 without a preinstalled Python. Keep the standalone executable as the production
 direction when offline-first installation is required.
 
-### Proof-of-concept sequence
-
-1. Add one wrapper CLI exposing `init` and `move`.
-2. Build both PyInstaller `onefile` and `onedir` variants on macOS.
-3. Verify package resources, stdout/stderr separation, exit codes, and explicit
-   data paths.
-4. Test without Python available on `PATH`.
-5. Measure size and cold/warm invocation latency.
-6. Reproduce the successful variant on Windows and Linux CI runners.
-7. Compare results with one Nuitka standalone build only if PyInstaller fails an
-   acceptance criterion.
-8. Publish signed or checksummed artifacts from the backend repository.
-9. Integrate the selected executable into OS-specific Java distributions.
-
 ### Interim development behavior
 
 Keep system Python and a local virtual environment only for contributor
@@ -379,15 +365,15 @@ Do not package `venv` into JAR or distribution archives.
 - If neither Python nor network may be required: ship an embedded or frozen
   platform-specific backend.
 
-## Acceptance criteria
+## Evaluation criteria
 
-- Users do not install Python or access the network to play.
-- The backend works on every declared OS and architecture.
-- `init` and `move` never write into the current working directory.
-- stdout contains only the documented JSON response.
-- stderr contains diagnostics and failures return non-zero exit codes.
-- Backend versions and SHA-256 checksums are pinned by the Java build.
-- Mutable Q-learning data survives application and backend upgrades.
-- Cold and warm move latency meet an agreed threshold.
-- CI verifies the executable on a machine environment where Python is absent
-  from `PATH`.
+These criteria evaluate alternatives; they do not describe current support.
+
+| Area | Evidence needed |
+| --- | --- |
+| Installation and platforms | Play offline without installed Python on every declared OS and architecture; CI runs the executable with Python absent from `PATH`. |
+| Filesystem | `init` and `move` receive explicit paths and never write into the current working directory. |
+| Process contract | Only documented JSON on stdout; diagnostics on stderr; non-zero failure exits. |
+| Reproducibility | Java build pins backend versions and SHA-256 checksums. |
+| Persistence | Mutable Q-learning data survives application and backend upgrades. |
+| Performance | Cold and warm move latency meet an agreed threshold. |

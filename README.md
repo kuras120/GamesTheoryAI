@@ -1,29 +1,26 @@
 # GamesTheoryAI
 
-GamesTheoryAI is a desktop application for playing classic board games and
-exploring how artificial intelligence behaves as an opponent.
+A JavaFX desktop playground for classic board games and AI integration:
+a chess board frontend (without chess move validation) and 4 × 4 tic-tac-toe
+with local play or an optional Python Q-learning opponent.
 
-The project currently provides chess and tic-tac-toe interfaces. Tic-tac-toe
-can be played against a Q-learning-based AI, making the application a simple
-showcase for connecting game interfaces with independently developed learning
-models.
+## Quick start
 
-## What Is Inside
-
-- a chess board frontend for exploring positions and pieces;
-- a 4 x 4 tic-tac-toe game for local play;
-- a Q-learning opponent integrated with tic-tac-toe.
-
-## Quick Start
-
-Make sure JDK 21 and Python 3.9 or newer are installed, then run:
+Install JDK 21 and Python 3.9+ with `pip` and `venv`, then run from the repository:
 
 ```shell
-./gradlew run                         # chess
-./gradlew run --args='tictactoe'     # tic-tac-toe
-./gradlew test                        # automated tests
+./gradlew run                      # chess
+./gradlew run --args='tictactoe'    # tic-tac-toe
+./gradlew test                     # tests
 ```
 
-## Documentation
+The build downloads the backend and its dependencies. Playing against AI uses
+system Python and a private environment prepared from the bundled wheels.
 
-- Repository guide: [`docs/guidelines/repository-guide.md`](docs/guidelines/repository-guide.md)
+## Useful links
+
+- [Architecture, build commands, and runtime](docs/architecture.md)
+- [Chess](docs/domain/chess.md) · [Tic-tac-toe](docs/domain/tic-tac-toe.md) · [AI contract](docs/domain/tic-tac-toe-ai.md)
+- [Research](docs/research/)
+- [Ideas and unfinished work](INBOX.md)
+- [Agent instructions](AGENTS.md)
