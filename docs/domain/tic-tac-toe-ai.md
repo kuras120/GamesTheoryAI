@@ -1,65 +1,78 @@
 # Tic-tac-toe AI domain
 
-The tic-tac-toe AI is an optional opponent for player `O`. The human remains
-player `X`. Enabling AI changes only who chooses `O` moves; scoring, turn order,
-board validation, and reset behavior remain owned by the tic-tac-toe domain.
+Optional Q-learning opponent for `O`; the human plays `X`. The application
+consumes moves without implementing the learning algorithm. Board rules,
+scoring, turns, and reset belong to the [tic-tac-toe domain](tic-tac-toe.md).
+See [architecture](../architecture.md) for packaging and runtime preparation.
 
-The opponent uses Q-learning to choose its moves. The game consumes the chosen
-move but does not reproduce or modify the learning algorithm.
-
-## Turn flow
-
-After the human places `X`, the game takes a row-major snapshot of the board and
-requests the opponent's move without blocking the interface. The board is
-temporarily disabled while the move is calculated. A valid result is applied
-as an `O` move.
-
-A reset invalidates an outstanding request so a result calculated for an older
-board is not applied to the new game.
-
-## Process input
-
-The command receives these positional arguments:
-
-1. player `X` score;
-2. player `O` score;
-3. every board cell flattened row by row.
-
-Marks are passed as `X` and `O`; an empty cell is passed as `N`.
-
-For a 4 x 4 board, the command therefore receives two score arguments followed
-by sixteen cell arguments.
-
-## Process output
-
-Standard output is reserved for exactly one JSON move:
-
-```json
-{"x": 2, "y": 3}
+```mermaid
+sequenceDiagram
+    actor Human
+    participant FX as IntegrationService / JavaFX thread
+    participant Worker as PythonExecutor / virtual thread
+    participant Backend as New games-theory process
+    Human->>FX: Place X with AI selected and runtime ready
+    FX->>FX: Record move, score, switch turn to O
+    FX->>FX: Disable board, capture generation, scores, row-major cells
+    FX->>Worker: Start move request
+    Worker->>Backend: CLI arguments with explicit application root
+    Note over Worker,Backend: Drain stdout and stderr independently, move timeout 1 minute
+    opt Reset while request is running
+        Human->>FX: Reset game
+        FX->>FX: Increment generation, clear board, scores, activity, enable board
+        Note over Worker,Backend: Running process is not cancelled by reset
+    end
+    alt Process exits successfully and output parses
+        Backend-->>Worker: stdout move JSON, optional stderr diagnostics
+        Worker-->>FX: Platform.runLater with parsed move
+        alt Stale generation
+            FX->>FX: Discard move
+        else Current request
+            FX->>FX: Validate bounds, cell existence, vacancy
+            alt Valid move
+                FX->>FX: Enable board, place O, record activity, score, switch to X
+            else Invalid target
+                FX->>FX: Log error, disable AI, enable board, record failure
+            end
+        end
+    else Numeric output exceeds Java int range
+        Worker->>Worker: Unhandled integer overflow
+        Note over FX,Worker: No recovery callback, board may remain disabled
+    else Non-zero exit, malformed output, I/O failure, timeout, interruption
+        Worker-->>FX: Log error, Platform.runLater failure callback
+        FX->>FX: Disable AI, enable board, record failure
+        Note over FX: This failure callback currently does not check generation
+    end
 ```
 
-Coordinates are zero-based. `x` is the column and `y` is the row. Standard
-error is reserved for diagnostic logs and does not invalidate a successful
-command by itself.
+Reset discards a successful response for the previous board. It does not cancel
+the process or erase learned data.
 
-The game rejects the result when:
+## Move contract
 
-- the process exits with a non-zero status;
-- standard output is not the expected JSON object with integer coordinates;
-- a coordinate is outside the board;
-- the selected cell does not exist or is already occupied.
+| Part | Contract |
+| --- | --- |
+| Invocation | `games-theory --config <application-root> <X-score> <O-score> <cells...>` |
+| Cells | Row-major order; `X`, `O`, or `N` for empty. A 4 × 4 board supplies 16 cells after the two scores. |
+| Stdout | Exactly one JSON object, e.g. `{"x": 2, "y": 3}`; integer coordinates in `x`, `y` order. |
+| Coordinates | Zero-based: `x` is column, `y` is row. |
+| Stderr | Diagnostics; output alone does not invalidate a successful command. |
+| Rejection | Non-zero exit, malformed output, out-of-range coordinates, missing or occupied cell. |
+| Parsing limits | Whole trimmed stdout must match the `x`, then `y` integer pattern, without extra fields or text; coordinates must fit Java `int`. |
 
-On a rejected or failed move, the error is logged and the board is made
-interactive again.
+## Availability and feedback
 
-## Availability and player feedback
+| State | Player experience |
+| --- | --- |
+| Preparing | Setup starts when tic-tac-toe opens; AI is disabled and unselected. |
+| Ready | AI can be enabled by the player; it stays unselected after preparation. |
+| Unavailable | Disabled option with installation/restart guidance; manual play and chess remain available. |
+| Handled move failure | Error is logged, AI is disabled, the board becomes interactive, and the activity feed records a friendly failure; integer overflow is an exception (below). |
 
-AI preparation begins when the game opens. AI remains unselected while it is
-prepared and after it becomes available, so the player always chooses whether
-to enable it.
+## Known limitations
 
-When AI cannot be prepared, its option remains disabled and the player receives
-a short explanation with installation or restart guidance. Chess and manual
-tic-tac-toe remain available. A fatal opponent error during a game disables AI,
-returns control to the player, and adds a friendly failure entry to the game
-activity feed.
+The failure callback from `PythonExecutor` does not check request generation,
+so an older request that fails after reset can disable AI in the new game.
+Integer coordinates outside Java `int` range throw an unchecked parsing error;
+that path is not handled by the `AiException` recovery callback. Follow-up fixes
+are tracked in [INBOX](../../INBOX.md).
